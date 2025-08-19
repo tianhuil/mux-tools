@@ -6,6 +6,7 @@ This module demonstrates Python 3.10+ features and provides the main functionali
 
 from typing import Any, Dict, List, Optional, Union
 import logging
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -120,6 +121,62 @@ def main() -> None:
     print(f"Statistics: {stats}")
     
     logger.info("Your project completed successfully!")
+
+
+# CLI wrapper functions for script entry points
+def greet_cli() -> int:
+    """
+    CLI wrapper for the greet function.
+    
+    This function is referenced in pyproject.toml under [project.scripts]
+    as "wt-greet = 'wt_tools.demo:greet_cli'"
+    
+    Returns:
+        Exit code (0 for success, non-zero for error)
+    """
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Greet someone')
+    parser.add_argument('name', help='Name to greet')
+    parser.add_argument('--greeting', '-g', help='Custom greeting message')
+    
+    args = parser.parse_args()
+    
+    try:
+        result = greet(args.name, args.greeting)
+        print(result)
+        return 0
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+
+def stats_cli() -> int:
+    """
+    CLI wrapper for the calculate_stats function.
+    
+    This function is referenced in pyproject.toml under [project.scripts]
+    as "wt-stats = 'wt_tools.demo:stats_cli'"
+    
+    Returns:
+        Exit code (0 for success, non-zero for error)
+    """
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Calculate statistics for numbers')
+    parser.add_argument('numbers', nargs='+', type=float, help='Numbers to analyze')
+    
+    args = parser.parse_args()
+    
+    try:
+        result = calculate_stats(args.numbers)
+        print("Statistics:")
+        for key, value in result.items():
+            print(f"  {key}: {value}")
+        return 0
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

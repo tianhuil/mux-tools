@@ -3,16 +3,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "your-project-name"
+name = "wt-tools"
 version = "0.1.0"
-description = "Your project description"
+description = "A collection of Python tools and utilities for development workflows"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
     {name = "Your Name", email = "your.email@example.com"},
 ]
-keywords = ["python", "project"]
+keywords = ["python", "tools", "utilities", "development", "workflow"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -21,14 +21,22 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Topic :: System :: Systems Administration",
+    "Operating System :: OS Independent",
 ]
 
 dependencies = [
-    # Add your dependencies here
-    # "requests>=2.31.0",
-    # "pandas>=2.0.0",
     "libtmux>=0.46.2",
+    "click>=8.0.0",
+    "rich>=13.0.0",
 ]
+
+[project.scripts]
+wt = "wt_tools.cli:main"
+wt-greet = "wt_tools.demo:greet_cli"
+wt-stats = "wt_tools.demo:stats_cli"
 
 [project.optional-dependencies]
 dev = [
@@ -39,6 +47,8 @@ dev = [
     "flake8>=6.0.0",
     "mypy>=1.0.0",
     "pre-commit>=3.0.0",
+    "build>=1.0.0",
+    "twine>=4.0.0",
 ]
 
 test = [
@@ -50,16 +60,35 @@ test = [
 docs = [
     "sphinx>=7.0.0",
     "sphinx-rtd-theme>=1.3.0",
+    "myst-parser>=2.0.0",
+]
+
+cli = [
+    "click>=8.0.0",
+    "rich>=13.0.0",
+    "typer>=0.9.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/your-project-name"
-Repository = "https://github.com/yourusername/your-project-name"
-Documentation = "https://your-project-name.readthedocs.io"
-"Bug Tracker" = "https://github.com/yourusername/your-project-name/issues"
+Homepage = "https://github.com/yourusername/wt-tools"
+Repository = "https://github.com/yourusername/wt-tools"
+Documentation = "https://wt-tools.readthedocs.io"
+"Bug Tracker" = "https://github.com/yourusername/wt-tools/issues"
+"Changelog" = "https://github.com/yourusername/wt-tools/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/your_project_name"]
+packages = ["src/wt_tools"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/docs",
+    "/README.md",
+    "/LICENSE",
+    "/CHANGELOG.md",
+    "/pyproject.toml",
+]
 
 [tool.black]
 line-length = 88
@@ -83,7 +112,7 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["your_project_name"]
+known_first_party = ["wt_tools"]
 
 [tool.mypy]
 python_version = "3.10"
@@ -133,3 +162,10 @@ exclude_lines = [
     "class .*\\bProtocol\\):",
     "@(abc\\.)?abstractmethod",
 ]
+
+# Documentation build configuration
+[tool.sphinx]
+project = "wt-tools"
+version = "0.1.0"
+release = "0.1.0"
+html_theme = "sphinx_rtd_theme"

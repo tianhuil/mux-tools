@@ -1,7 +1,7 @@
 """
-Your Project Name
+wt-tools
 
-A Python project using uv for dependency management, targeting Python 3.10+.
+A collection of Python tools and utilities for development workflows.
 """
 
 __version__ = "0.1.0"
@@ -16,4 +16,7 @@ __all__ = [
     "__version__",
     "__author__",
     "__email__",
+    "greet",
+    "process_data", 
+    "calculate_stats",
 ]

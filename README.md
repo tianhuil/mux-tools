@@ -1,6 +1,6 @@
-# Your Project Name
+# wt-tools
 
-A Python project using `uv` for dependency management, targeting Python 3.10+.
+A collection of Python tools and utilities for development workflows, built with Python 3.10+ features.
 
 ## 🐍 Python Version
 
@@ -32,7 +32,7 @@ This project is configured for **Python 3.10** and above. The `pyproject.toml` s
 1. **Clone the repository**:
    ```bash
    git clone <your-repo-url>
-   cd your-project-name
+   cd wt-tools
    ```
 
 2. **Create a virtual environment with Python 3.10**:
@@ -62,19 +62,61 @@ This project is configured for **Python 3.10** and above. The `pyproject.toml` s
 ## 📁 Project Structure
 
 ```
-your-project-name/
+wt-tools/
 ├── src/
-│   └── your_project_name/
+│   └── wt_tools/
 │       ├── __init__.py
-│       └── main.py
+│       ├── cli.py         # Command-line interface
+│       └── demo.py        # Demo functionality
 ├── tests/
 │   ├── __init__.py
-│   └── test_main.py
+│   └── test_demo.py
 ├── docs/
-├── pyproject.toml          # Project configuration and dependencies
-├── README.md              # This file
-├── .gitignore            # Git ignore patterns
-└── .venv/                # Virtual environment (created by uv)
+├── pyproject.toml         # Project configuration and dependencies
+├── README.md             # This file
+├── LICENSE               # MIT License
+├── CHANGELOG.md          # Version history
+├── .gitignore           # Git ignore patterns
+└── .venv/               # Virtual environment (created by uv)
+```
+
+## 🚀 Installation
+
+### From PyPI (when published)
+```bash
+pip install wt-tools
+```
+
+### From source
+```bash
+git clone <your-repo-url>
+cd wt-tools
+uv pip install -e .
+```
+
+## 🖥️ Command Line Usage
+
+After installation, you can use the following commands:
+
+```bash
+# Main CLI tool
+wt --help
+
+# Greet someone
+wt greet Alice
+wt greet Bob --greeting "Good morning"
+
+# Process data
+wt process "hello world"
+
+# Calculate statistics
+wt stats 1 2 3 4 5
+
+# Run demo
+wt demo
+
+# Show package info
+wt info
 ```
 
 ## 🛠️ Development Workflow
