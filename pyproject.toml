@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "wt-tools"
 version = "0.1.0"
-description = "A collection of Python tools and utilities for development workflows"
+description = "A tmux session and window management utility built with Python 3.10+ and libtmux"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -29,14 +29,11 @@ classifiers = [
 
 dependencies = [
     "libtmux>=0.46.2",
-    "click>=8.0.0",
     "rich>=13.0.0",
 ]
 
 [project.scripts]
 wt = "wt_tools.cli:main"
-wt-greet = "wt_tools.demo:greet_cli"
-wt-stats = "wt_tools.demo:stats_cli"
 
 [project.optional-dependencies]
 dev = [
@@ -64,9 +61,7 @@ docs = [
 ]
 
 cli = [
-    "click>=8.0.0",
     "rich>=13.0.0",
-    "typer>=0.9.0",
 ]
 
 [project.urls]

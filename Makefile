@@ -62,7 +62,7 @@ build:
 
 # Run the main module
 run:
-	uv run python -m wt_tools.demo
+	uv run wt --help
 
 # Initial project setup
 setup: install-dev

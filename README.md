@@ -1,6 +1,6 @@
 # wt-tools
 
-A collection of Python tools and utilities for development workflows, built with Python 3.10+ features.
+A tmux session and window management utility built with Python 3.10+ features and libtmux.
 
 ## 🐍 Python Version
 
@@ -66,7 +66,7 @@ wt-tools/
 ├── src/
 │   └── wt_tools/
 │       ├── __init__.py
-│       ├── cli.py         # Command-line interface
+│       ├── cli.py         # Tmux CLI interface (argparse + libtmux)
 │       └── demo.py        # Demo functionality
 ├── tests/
 │   ├── __init__.py
@@ -96,27 +96,22 @@ uv pip install -e .
 
 ## 🖥️ Command Line Usage
 
-After installation, you can use the following commands:
+After installation, you can use the following tmux management commands:
 
 ```bash
 # Main CLI tool
 wt --help
 
-# Greet someone
-wt greet Alice
-wt greet Bob --greeting "Good morning"
+# Session management
+wt session new myproject     # Create and attach to new session
+wt session attach myproject  # Attach to existing session
+wt session list             # List all sessions
 
-# Process data
-wt process "hello world"
-
-# Calculate statistics
-wt stats 1 2 3 4 5
-
-# Run demo
-wt demo
-
-# Show package info
-wt info
+# Window management
+wt window new               # Create new window
+wt window goto 3            # Go to window 3
+wt window close             # Close current window
+wt window list              # List windows in current session
 ```
 
 ## 🛠️ Development Workflow
