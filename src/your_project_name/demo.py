@@ -1,5 +1,5 @@
 """
-Main module for your project.
+Demo module for your project.
 
 This module demonstrates Python 3.10+ features and provides the main functionality.
 """

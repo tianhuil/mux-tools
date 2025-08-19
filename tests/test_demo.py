@@ -1,11 +1,11 @@
 """
-Tests for the main module.
+Tests for the demo module.
 
 This module demonstrates testing with pytest and Python 3.10+ features.
 """
 
 import pytest
-from your_project_name.main import greet, process_data, calculate_stats
+from your_project_name.demo import greet, process_data, calculate_stats
 
 
 class TestGreet:

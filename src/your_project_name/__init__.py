@@ -8,8 +8,8 @@ __version__ = "0.1.0"
 __author__ = "Your Name"
 __email__ = "your.email@example.com"
 
-# Import main functionality
-from .main import *
+# Import demo functionality
+from .demo import *
 
 __all__ = [
     # Add your public API here
