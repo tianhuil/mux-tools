@@ -27,6 +27,7 @@ dependencies = [
     # Add your dependencies here
     # "requests>=2.31.0",
     # "pandas>=2.0.0",
+    "libtmux>=0.46.2",
 ]
 
 [project.optional-dependencies]
