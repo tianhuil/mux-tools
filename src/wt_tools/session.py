@@ -62,7 +62,7 @@ def attach(session_name: str) -> None:
 
 @click.command()
 @click.option('--detailed', '-d', is_flag=True, help='Show detailed session information including windows')
-def list(detailed: bool) -> None:
+def list_sessions(detailed: bool) -> None:
     """List all available tmux sessions."""
     try:
         server = libtmux.Server()
@@ -121,7 +121,8 @@ def list(detailed: bool) -> None:
 @click.command()
 @click.argument('session_name')
 @click.option('-f', '--force', is_flag=True, help='Force kill without confirmation')
-def kill(session_name: str, force: bool) -> None:
+@click.option('-y', '--yes', is_flag=True, help='Always accept without confirmation')
+def kill(session_name: str, force: bool, yes: bool) -> None:
     """Kill a specific tmux session or all sessions if session_name is '-'."""
     try:
         server = libtmux.Server()
@@ -140,7 +141,7 @@ def kill(session_name: str, force: bool) -> None:
                 status = " (attached)" if session.session_attached else ""
                 console.print(f"  - {session.session_name}{status}")
             
-            if not force:
+            if not force and not yes:
                 response = input("Are you sure? (y/N): ")
                 if response.lower() != 'y':
                     console.print("[yellow]Session kill cancelled[/yellow]")
@@ -162,7 +163,7 @@ def kill(session_name: str, force: bool) -> None:
         # Normal case: kill specific session
         found_session = server.find_where({"session_name": session_name})
         
-        if found_session is None:
+        if not found_session:
             console.print(f"[red]Session '{session_name}' not found[/red]")
             console.print("[yellow]Available sessions:[/yellow]")
             for s in server.sessions:
@@ -170,7 +171,7 @@ def kill(session_name: str, force: bool) -> None:
             sys.exit(1)
         
         # Check if session is attached and warn user
-        if found_session.session_attached and not force:
+        if found_session.session_attached and not force and not yes:
             console.print(f"[yellow]Warning: Session '{session_name}' is currently attached.[/yellow]")
             response = input("Are you sure you want to kill it? (y/N): ")
             if response.lower() != 'y':
@@ -184,58 +185,3 @@ def kill(session_name: str, force: bool) -> None:
         console.print(f"[red]Error killing session: {e}[/red]")
         sys.exit(1)
 
-
-@click.command()
-@click.option('-e', '--except', 'except_session', help='Session name to keep')
-@click.option('-f', '--force', is_flag=True, help='Force kill without confirmation')
-def kill_all(except_session: str | None, force: bool) -> None:
-    """Kill all tmux sessions, optionally excepting one."""
-    try:
-        server = libtmux.Server()
-        sessions = server.sessions
-        
-        if not sessions:
-            console.print("[yellow]No tmux sessions found[/yellow]")
-            return
-        
-        # Filter sessions to kill
-        sessions_to_kill = []
-        for session in sessions:
-            if except_session and session.session_name == except_session:
-                continue
-            sessions_to_kill.append(session)
-        
-        if not sessions_to_kill:
-            console.print(f"[yellow]No sessions to kill (keeping '{except_session}')[/yellow]")
-            return
-        
-        # Show what will be killed
-        console.print(f"[yellow]Will kill {len(sessions_to_kill)} session(s):[/yellow]")
-        for session in sessions_to_kill:
-            status = " (attached)" if session.session_attached else ""
-            console.print(f"  - {session.session_name}{status}")
-        
-        if not force:
-            response = input("Are you sure? (y/N): ")
-            if response.lower() != 'y':
-                console.print("[yellow]Session kill cancelled[/yellow]")
-                return
-        
-        # Kill sessions
-        killed_count = 0
-        for session in sessions_to_kill:
-            try:
-                session.kill_session()
-                killed_count += 1
-                console.print(f"[green]Killed session '{session.session_name}'[/green]")
-            except Exception as e:
-                console.print(f"[red]Error killing session '{session.session_name}': {e}[/red]")
-        
-        if except_session:
-            console.print(f"[green]Killed {killed_count} sessions, kept '{except_session}'[/green]")
-        else:
-            console.print(f"[green]Killed {killed_count} sessions[/green]")
-        
-    except Exception as e:
-        console.print(f"[red]Error killing sessions: {e}[/red]")
-        sys.exit(1)
