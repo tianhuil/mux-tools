@@ -1,0 +1,11 @@
+---
+globs: *.py
+alwaysApply: false
+---
+
+
+
+# Typing Rules
+
+1. Type args and return values of top level functions and class methods.
+2. Prefer `X | None` to `Optional[X]`.
