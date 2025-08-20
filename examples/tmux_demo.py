@@ -56,6 +56,10 @@ def main():
         "wt session new myproject     # Create and attach to new session",
         "wt session attach myproject  # Attach to existing session", 
         "wt session list             # List all sessions",
+        "wt session list-detailed    # List sessions with detailed info",
+        "wt session kill myproject   # Kill a specific session",
+        "wt session kill-all         # Kill all sessions",
+        "wt session kill-all -e current # Kill all except 'current'",
         "wt window new               # Create new window",
         "wt window goto 3            # Go to window 3",
         "wt window close             # Close current window",
@@ -72,6 +76,9 @@ def main():
     print("3. List windows: wt window list")
     print("4. Switch to window 1: wt window goto 1")
     print("5. List sessions: wt session list")
+    print("6. List detailed sessions: wt session list-detailed")
+    print("7. Kill a session: wt session kill demo")
+    print("8. Kill all sessions: wt session kill-all")
     
     print("\n✨ Demo completed!")
 
