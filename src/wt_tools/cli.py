@@ -21,11 +21,29 @@ def create_session(session_name: str) -> None:
     try:
         console.print(f"[blue]Creating new session '{session_name}'...[/blue]")
         server = libtmux.Server()
-            
-        server.new_session(session_name=session_name, attach=True)
+        
+        # Create session without attaching first
+        import os
+        current_dir = os.getcwd()
+        
+        session = server.new_session(
+            session_name=session_name, 
+            attach=False,
+            start_directory=current_dir
+        )
+        
+        # Get the first window and pane
+        window = session.windows[0]
+        pane = window.panes[0]
+        
+        # Clear any existing content and start a fresh shell
+        pane.send_keys("clear", enter=True)
+        
+        # Now attach to the session
+        session.attach_session()
 
     except Exception as e:
-        console.print(f"[red]Error attaching to session: {e}[/red]")
+        console.print(f"[red]Error creating session: {e}[/red]")
         sys.exit(1)
 
 
