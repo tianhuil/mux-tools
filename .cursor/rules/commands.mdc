@@ -1,0 +1,12 @@
+---
+description: when running a bash command
+alwaysApply: false
+---
+
+# Bash command instructions
+
+When running a bash command, always kill the command after some time (5 seconds by default but longer if necessary):
+
+```sh
+perl -e 'alarm 5; exec @ARGV' "your_command_here"
+```
