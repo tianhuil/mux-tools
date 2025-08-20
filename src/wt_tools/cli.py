@@ -12,7 +12,7 @@ from . import session, window
 console = Console()
 
 
-from typing import Any, Optional
+from typing import Any
 
 class AliasedGroup(click.Group):
     """A click group that supports aliases for commands."""
@@ -21,13 +21,13 @@ class AliasedGroup(click.Group):
         super().__init__(*args, **kwargs)
         self._aliases: dict[str, str] = {}
     
-    def add_command(self, cmd: click.Command, name: Optional[str] = None, alias: Optional[str] = None) -> None:
+    def add_command(self, cmd: click.Command, name: str | None = None, alias: str | None = None) -> None:
         """Add a command with an optional alias."""
         super().add_command(cmd, name)
         if alias:
             self._aliases[alias] = name or cmd.name or ""
     
-    def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
+    def get_command(self, ctx: click.Context, cmd_name: str) -> click.Command | None:
         """Get command by name or alias."""
         # First try the normal command lookup
         cmd = super().get_command(ctx, cmd_name)

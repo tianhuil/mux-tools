@@ -6,7 +6,6 @@ This module provides Click commands for managing tmux sessions.
 
 import os
 import sys
-from typing import Optional
 
 import click
 import libtmux
@@ -168,7 +167,7 @@ def kill(session_name: str, force: bool) -> None:
 @click.command()
 @click.option('-e', '--except', 'except_session', help='Session name to keep')
 @click.option('-f', '--force', is_flag=True, help='Force kill without confirmation')
-def kill_all(except_session: Optional[str], force: bool) -> None:
+def kill_all(except_session: str | None, force: bool) -> None:
     """Kill all tmux sessions, optionally excepting one."""
     try:
         server = libtmux.Server()

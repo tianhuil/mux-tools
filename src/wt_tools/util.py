@@ -5,12 +5,11 @@ This module provides common utility functions used across the package.
 """
 
 import os
-from typing import Optional
 import libtmux
 from libtmux.session import Session
 
 
-def get_current_session() -> Optional[Session]:
+def get_current_session() -> Session | None:
     """Get the current tmux session using environment variables."""
     tmux_env = os.environ.get('TMUX')
     if not tmux_env:
