@@ -5,6 +5,7 @@ This module provides the main CLI entry point for the wt-tools package using arg
 """
 
 import argparse
+import os
 import sys
 from typing import Optional
 
@@ -59,18 +60,28 @@ def attach_session(session_name: str) -> None:
         sys.exit(1)
 
 
+def get_current_session():
+    tmux_env = os.environ.get('TMUX')
+    parts = tmux_env.split(',')
+    if len(parts) > 2:
+        session_id = f"${parts[2]}"  # Prepend '$' as tmux IDs usually start with it
+
+        # You can then use this ID to get the session object
+        server = libtmux.Server()
+        return server.get_by_id(session_id)
+    return None
+
 def new_window() -> None:
     """Create a new window in the current session."""
     try:
-        server = libtmux.Server()
-        current_session = server.get_current_session()
-        
+        current_session = get_current_session()
         if not current_session:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
         
         new_win = current_session.new_window()
-        console.print(f"[green]Created new window '{new_win.window_name}' (index: {new_win.window_index})[/green]")
+        console.print(f"[green]Created and switched to new window '{new_win.window_name}' (index: {new_win.window_index})[/green]")
+        new_win.select_window()
         
     except Exception as e:
         console.print(f"[red]Error creating new window: {e}[/red]")
@@ -81,11 +92,14 @@ def goto_window(window_index: int) -> None:
     """Go to a specific window by index."""
     try:
         server = libtmux.Server()
-        current_session = server.get_current_session()
         
-        if not current_session:
+        # Find the currently attached session
+        attached_sessions = server.sessions.filter(session_attached=True)
+        if not attached_sessions:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
+        
+        current_session = attached_sessions[0]
         
         # Find window by index
         window = current_session.find_where({"window_index": window_index})
@@ -108,13 +122,15 @@ def close_window() -> None:
     """Close the current window."""
     try:
         server = libtmux.Server()
-        current_session = server.get_current_session()
         
-        if not current_session:
+        # Find the currently attached session
+        attached_sessions = server.sessions.filter(session_attached=True)
+        if not attached_sessions:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
         
-        current_window = current_session.get_current_window()
+        current_session = attached_sessions[0]
+        current_window = current_session.active_window
         window_name = current_window.window_name
         window_index = current_window.window_index
         
@@ -126,7 +142,7 @@ def close_window() -> None:
                 console.print("[yellow]Window close cancelled[/yellow]")
                 return
         
-        current_window.kill_window()
+        current_window.kill()
         console.print(f"[green]Closed window {window_index}: {window_name}[/green]")
         
     except Exception as e:
@@ -290,12 +306,14 @@ def list_windows() -> None:
     """List all windows in the current session."""
     try:
         server = libtmux.Server()
-        current_session = server.get_current_session()
         
-        if not current_session:
+        # Find the currently attached session
+        attached_sessions = server.sessions.filter(session_attached=True)
+        if not attached_sessions:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
         
+        current_session = attached_sessions[0]
         console.print(f"[bold]Windows in session '{current_session.session_name}':[/bold]")
         for window in current_session.windows:
             status = "[green]●[/green]" if window.window_active else "[gray]○[/gray]"
