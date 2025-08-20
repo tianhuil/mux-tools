@@ -120,6 +120,29 @@ def list(detailed: bool) -> None:
 
 
 @click.command()
+def detach() -> None:
+    """Detach from the current tmux session."""
+    try:
+        # Check if we're currently in a tmux session
+        if not os.environ.get('TMUX'):
+            console.print("[yellow]Not currently in a tmux session[/yellow]")
+            return
+        
+        console.print("[blue]Detaching from current tmux session...[/blue]")
+        
+        # Use tmux detach command to detach from the current session
+        import subprocess
+        subprocess.run(['tmux', 'detach'], check=True)
+        
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]Error detaching from session: {e}[/red]")
+        sys.exit(1)
+    except Exception as e:
+        console.print(f"[red]Error detaching from session: {e}[/red]")
+        sys.exit(1)
+
+
+@click.command()
 @click.argument('session_name')
 @click.option('-f', '--force', is_flag=True, help='Force kill without confirmation')
 @click.option('-y', '--yes', is_flag=True, help='Always accept without confirmation')
@@ -198,6 +221,7 @@ def create_session_group(cli_group: click.Group) -> click.Group:
     session_group.add_command(attach, 'a')
     session_group.add_command(list, 'l')
     session_group.add_command(kill, 'k')
+    session_group.add_command(detach, 'd')
 
     return session_group
 
