@@ -35,8 +35,8 @@ dependencies = [
 ]
 
 [project.scripts]
-mux = "mux.cli:main"
-m = "mux.cli:main"
+mux = "mux.main:main"
+m = "mux.main:main"
 
 [project.optional-dependencies]
 dev = [
