@@ -8,7 +8,6 @@ import sys
 
 import click
 from click_aliases import ClickAliasedGroup
-import libtmux
 from rich.console import Console
 
 from .util import get_current_session
@@ -40,8 +39,6 @@ def new() -> None:
 def goto(window_index: int) -> None:
     """Go to a specific window by index."""
     try:
-        server = libtmux.Server()
-        
         # Find the currently attached session
         current_session = get_current_session()
         if not current_session:
@@ -69,8 +66,6 @@ def goto(window_index: int) -> None:
 def close() -> None:
     """Close the current window."""
     try:
-        server = libtmux.Server()
-        
         # Find the currently attached session
         current_session = get_current_session()
         if not current_session:
@@ -101,8 +96,6 @@ def close() -> None:
 def list() -> None:
     """List all windows in the current session."""
     try:
-        server = libtmux.Server()
-        
         # Find the currently attached session
         current_session = get_current_session()
         if not current_session:
