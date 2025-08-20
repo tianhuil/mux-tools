@@ -47,7 +47,7 @@ def window_group() -> None:
 window_group.add_command(window.new, 'new')
 window_group.add_command(window.goto, 'goto')
 window_group.add_command(window.close, 'close')
-window_group.add_command(window.list_windows, 'list')
+window_group.add_command(window.list, 'list')
 
 
 def main() -> None:

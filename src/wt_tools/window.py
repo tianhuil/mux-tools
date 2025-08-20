@@ -100,7 +100,7 @@ def close() -> None:
 
 
 @click.command()
-def list_windows() -> None:
+def list() -> None:
     """List all windows in the current session."""
     try:
         server = libtmux.Server()
