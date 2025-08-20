@@ -14,7 +14,7 @@ from rich.console import Console
 console = Console()
 
 
-def get_current_session():
+def get_current_session() -> libtmux.Session | None:
     """Get the current tmux session using environment variables."""
     tmux_env = os.environ.get('TMUX')
     if not tmux_env:
