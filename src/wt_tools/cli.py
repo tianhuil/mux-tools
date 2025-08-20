@@ -32,14 +32,6 @@ def create_session(session_name: str) -> None:
             start_directory=current_dir
         )
         
-        # Get the first window and pane
-        window = session.windows[0]
-        pane = window.panes[0]
-        
-        # Clear any existing content and start a fresh shell
-        pane.send_keys("clear", enter=True)
-        
-        # Now attach to the session
         session.attach_session()
 
     except Exception as e:
