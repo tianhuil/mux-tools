@@ -46,7 +46,7 @@ def goto(window_index: int) -> None:
             sys.exit(1)
         
         # Find window by index
-        window = current_session.find_where({"window_index": window_index})
+        window = current_session.find_where({"window_index": str(window_index)})
         if not window:
             console.print(f"[red]Window {window_index} not found[/red]")
             console.print("[yellow]Available windows:[/yellow]")
