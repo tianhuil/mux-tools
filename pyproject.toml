@@ -30,10 +30,11 @@ classifiers = [
 dependencies = [
     "libtmux>=0.46.2",
     "rich>=13.0.0",
+    "click>=8.0.0",
 ]
 
 [project.scripts]
-wt = "wt_tools.cli:main"
+wt2 = "wt_tools.cli:main"
 
 [project.optional-dependencies]
 dev = [
