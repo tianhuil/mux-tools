@@ -1,5 +1,5 @@
 """
-wt-tools
+mux-tools
 
 A collection of Python tools and utilities for development workflows.
 """
@@ -9,7 +9,7 @@ __author__ = "Your Name"
 __email__ = "your.email@example.com"
 
 # Import demo functionality
-from .demo import *
+from ._demo import *
 
 __all__ = [
     # Add your public API here
