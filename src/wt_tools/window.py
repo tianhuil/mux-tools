@@ -7,6 +7,7 @@ This module provides Click commands for managing tmux windows.
 import sys
 
 import click
+from click_aliases import ClickAliasedGroup
 import libtmux
 from rich.console import Console
 
@@ -120,3 +121,19 @@ def list() -> None:
     except Exception as e:
         console.print(f"[red]Error listing windows: {e}[/red]")
         sys.exit(1)
+
+
+def create_window_group(cli_group: click.Group) -> click.Group:
+    """Create and configure the window command group."""
+    @cli_group.group(name='window', aliases=['w'], cls=ClickAliasedGroup)
+    def window_group() -> None:
+        """Window management commands."""
+        pass
+    
+    # Add aliases for window commands
+    window_group.add_command(new, 'n')
+    window_group.add_command(goto, 'g')
+    window_group.add_command(close, 'c')
+    window_group.add_command(list, 'l')
+
+    return window_group

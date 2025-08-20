@@ -8,6 +8,7 @@ import os
 import sys
 
 import click
+from click_aliases import ClickAliasedGroup
 import libtmux
 from rich.console import Console
 
@@ -184,4 +185,19 @@ def kill(session_name: str, force: bool, yes: bool) -> None:
     except Exception as e:
         console.print(f"[red]Error killing session: {e}[/red]")
         sys.exit(1)
+
+
+def create_session_group(cli_group: click.Group) -> click.Group:
+    """Create and configure the session command group."""
+    @cli_group.group(name='session', aliases=['s'], cls=ClickAliasedGroup)
+    def session_group() -> None:
+        """Session management commands."""
+        pass
+    # Add aliases for session commands
+    session_group.add_command(new, 'n')
+    session_group.add_command(attach, 'a')
+    session_group.add_command(list, 'l')
+    session_group.add_command(kill, 'k')
+
+    return session_group
 
