@@ -12,20 +12,22 @@ from . import session, window
 console = Console()
 
 
+from typing import Any, Optional
+
 class AliasedGroup(click.Group):
     """A click group that supports aliases for commands."""
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self._aliases = {}
+        self._aliases: dict[str, str] = {}
     
-    def add_command(self, cmd, name=None, alias=None):
+    def add_command(self, cmd: click.Command, name: Optional[str] = None, alias: Optional[str] = None) -> None:
         """Add a command with an optional alias."""
         super().add_command(cmd, name)
         if alias:
-            self._aliases[alias] = name
+            self._aliases[alias] = name or cmd.name or ""
     
-    def get_command(self, ctx, cmd_name):
+    def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Get command by name or alias."""
         # First try the normal command lookup
         cmd = super().get_command(ctx, cmd_name)

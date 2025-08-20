@@ -36,7 +36,7 @@ def greet(name: str, greeting: Optional[str] = None) -> str:
     return f"{greeting}, {name}!"
 
 
-def process_data(data: Union[str, List[str], Dict[str, Any]]) -> str:
+def process_data(data: Any) -> str:
     """
     Process different types of data using Python 3.10+ pattern matching.
     

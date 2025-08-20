@@ -165,3 +165,8 @@ project = "wt-tools"
 version = "0.1.0"
 release = "0.1.0"
 html_theme = "sphinx_rtd_theme"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.17.1",
+]

@@ -1344,6 +1344,11 @@ test = [
     { name = "pytest-mock" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=23.0.0" },
@@ -1367,6 +1372,9 @@ requires-dist = [
     { name = "twine", marker = "extra == 'dev'", specifier = ">=4.0.0" },
 ]
 provides-extras = ["dev", "test", "docs", "cli"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "mypy", specifier = ">=1.17.1" }]
 
 [[package]]
 name = "zipp"
