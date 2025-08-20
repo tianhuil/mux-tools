@@ -25,31 +25,31 @@ def cli(verbose: bool) -> None:
 
 
 # Session commands
-@cli.group()
-def s_group() -> None:
+@cli.group(name='s')
+def session_group() -> None:
     """Session management commands."""
     pass
 
 
-s_group.add_command(session.new, 'new')
-s_group.add_command(session.attach, 'attach')
-s_group.add_command(session.list_sessions, 'list')
-s_group.add_command(session.list_detailed, 'list-detailed')
-s_group.add_command(session.kill, 'kill')
-s_group.add_command(session.kill_all, 'kill-all')
+session_group.add_command(session.new, 'new')
+session_group.add_command(session.attach, 'attach')
+session_group.add_command(session.list_sessions, 'list')
+session_group.add_command(session.list_detailed, 'list-detailed')
+session_group.add_command(session.kill, 'kill')
+session_group.add_command(session.kill_all, 'kill-all')
 
 
 # Window commands
-@cli.group()
-def w_group() -> None:
+@cli.group(name='w')
+def window_group() -> None:
     """Window management commands."""
     pass
 
 
-w_group.add_command(window.new, 'new')
-w_group.add_command(window.goto, 'goto')
-w_group.add_command(window.close, 'close')
-w_group.add_command(window.list_windows, 'list')
+window_group.add_command(window.new, 'new')
+window_group.add_command(window.goto, 'goto')
+window_group.add_command(window.close, 'close')
+window_group.add_command(window.list_windows, 'list')
 
 
 def main() -> None:
