@@ -127,9 +127,9 @@ def create_window_group(cli_group: click.Group) -> click.Group:
         pass
 
     # Add aliases for window commands
-    window_group.add_command(new, 'n')
-    window_group.add_command(goto, 'g')
-    window_group.add_command(close, 'c')
-    window_group.add_command(list, 'l')
+    window_group.add_command(new, 'new', aliases=['n'])  # type: ignore
+    window_group.add_command(goto, 'goto', aliases=['g'])  # type: ignore
+    window_group.add_command(close, 'close', aliases=['c'])  # type: ignore
+    window_group.add_command(list, 'list', aliases=['l'])  # type: ignore
 
     return window_group

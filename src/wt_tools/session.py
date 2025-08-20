@@ -217,11 +217,11 @@ def create_session_group(cli_group: click.Group) -> click.Group:
         """Session management commands."""
         pass
     # Add aliases for session commands
-    session_group.add_command(new, 'n')
-    session_group.add_command(attach, 'a')
-    session_group.add_command(list, 'l')
-    session_group.add_command(kill, 'k')
-    session_group.add_command(detach, 'd')
+    session_group.add_command(new, 'new', aliases=['n'])  # type: ignore
+    session_group.add_command(attach, 'attach', aliases=['a'])  # type: ignore
+    session_group.add_command(list, 'list', aliases=['l'])  # type: ignore
+    session_group.add_command(kill, 'kill', aliases=['k'])  # type: ignore
+    session_group.add_command(detach, 'detach', aliases=['d'])  # type: ignore
 
     return session_group
 
