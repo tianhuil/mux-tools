@@ -1,5 +1,5 @@
 """
-Session management commands for wt-tools.
+Session management commands for mux-tools.
 
 This module provides Click commands for managing tmux sessions.
 """

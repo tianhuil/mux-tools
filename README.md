@@ -1,4 +1,4 @@
-# wt-tools
+# mux-tools
 
 A tmux session and window management utility built with Python 3.10+ features and libtmux.
 
@@ -32,7 +32,7 @@ This project is configured for **Python 3.10** and above. The `pyproject.toml` s
 1. **Clone the repository**:
    ```bash
    git clone <your-repo-url>
-   cd wt-tools
+   cd mux-tools
    ```
 
 2. **Create a virtual environment with Python 3.10**:
@@ -62,9 +62,9 @@ This project is configured for **Python 3.10** and above. The `pyproject.toml` s
 ## 📁 Project Structure
 
 ```
-wt-tools/
+mux-tools/
 ├── src/
-│   └── wt_tools/
+│   └── mux/
 │       ├── __init__.py
 │       ├── cli.py         # Tmux CLI interface (argparse + libtmux)
 │       └── demo.py        # Demo functionality
@@ -84,13 +84,13 @@ wt-tools/
 
 ### From PyPI (when published)
 ```bash
-pip install wt-tools
+pip install mux-tools
 ```
 
 ### From source
 ```bash
 git clone <your-repo-url>
-cd wt-tools
+cd mux-tools
 uv pip install -e .
 ```
 
@@ -100,18 +100,18 @@ After installation, you can use the following tmux management commands:
 
 ```bash
 # Main CLI tool
-wt --help
+mux --help
 
 # Session management
-wt session new myproject     # Create and attach to new session
-wt session attach myproject  # Attach to existing session
-wt session list             # List all sessions
+mux session new myproject     # Create and attach to new session
+mux session attach myproject  # Attach to existing session
+mux session list             # List all sessions
 
 # Window management
-wt window new               # Create new window
-wt window goto 3            # Go to window 3
-wt window close             # Close current window
-wt window list              # List windows in current session
+mux window new               # Create new window
+mux window goto 3            # Go to window 3
+mux window close             # Close current window
+mux window list              # List windows in current session
 ```
 
 ## 🛠️ Development Workflow

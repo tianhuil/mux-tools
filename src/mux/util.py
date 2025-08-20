@@ -1,5 +1,5 @@
 """
-Utility functions for wt-tools.
+Utility functions for mux-tools.
 
 This module provides common utility functions used across the package.
 """

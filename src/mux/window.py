@@ -1,5 +1,5 @@
 """
-Window management commands for wt-tools.
+Window management commands for mux-tools.
 
 This module provides Click commands for managing tmux windows.
 """

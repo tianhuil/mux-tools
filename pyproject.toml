@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "wt-tools"
+name = "mux-tools"
 version = "0.1.0"
 description = "A tmux session and window management utility built with Python 3.10+ and libtmux"
 readme = "README.md"
@@ -35,7 +35,8 @@ dependencies = [
 ]
 
 [project.scripts]
-wt2 = "wt_tools.cli:main"
+mux = "mux.cli:main"
+m = "mux.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -67,14 +68,14 @@ cli = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/wt-tools"
-Repository = "https://github.com/yourusername/wt-tools"
-Documentation = "https://wt-tools.readthedocs.io"
-"Bug Tracker" = "https://github.com/yourusername/wt-tools/issues"
-"Changelog" = "https://github.com/yourusername/wt-tools/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/yourusername/mux-tools"
+Repository = "https://github.com/yourusername/mux-tools"
+Documentation = "https://mux-tools.readthedocs.io"
+"Bug Tracker" = "https://github.com/yourusername/mux-tools/issues"
+"Changelog" = "https://github.com/yourusername/mux-tools/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/wt_tools"]
+packages = ["src/mux"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -109,7 +110,7 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["wt_tools"]
+known_first_party = ["mux"]
 
 [tool.mypy]
 python_version = "3.10"
@@ -162,7 +163,7 @@ exclude_lines = [
 
 # Documentation build configuration
 [tool.sphinx]
-project = "wt-tools"
+project = "mux-tools"
 version = "0.1.0"
 release = "0.1.0"
 html_theme = "sphinx_rtd_theme"

@@ -1,5 +1,5 @@
 """
-Base CLI configuration for wt-tools.
+Base CLI configuration for mux-tools.
 
 This module provides the main CLI group using ClickAliasedGroup for alias support.
 """
@@ -12,14 +12,14 @@ console = Console()
 
 
 @click.group(cls=ClickAliasedGroup)
-@click.version_option(version='0.1.0', prog_name='wt-tools')
+@click.version_option(version='0.1.0', prog_name='mux-tools')
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output')
 def cli(verbose: bool) -> None:
     """
-    wt-tools - Tmux session and window management utilities.
+    mux-tools - Tmux session and window management utilities.
     """
     if verbose:
-        console.print("[bold blue]wt-tools[/bold blue] - Tmux utilities")
+        console.print("[bold blue]mux-tools[/bold blue] - Tmux utilities")
         console.print(f"Verbose mode: [green]enabled[/green]")
 
 

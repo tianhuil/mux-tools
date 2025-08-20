@@ -1,7 +1,7 @@
 """
-Command-line interface for wt-tools.
+Command-line interface for mux-tools.
 
-This module provides the main CLI entry point for the wt-tools package using Click.
+This module provides the main CLI entry point for the mux-tools package using Click.
 """
 
 from .base import cli

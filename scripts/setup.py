@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup script for wt-tools development environment.
+Setup script for mux-tools development environment.
 """
 
 import subprocess
@@ -17,7 +17,7 @@ def run_command(cmd: str, check: bool = True) -> subprocess.CompletedProcess:
 
 def main():
     """Set up the development environment."""
-    print("Setting up wt-tools development environment...")
+    print("Setting up mux-tools development environment...")
     
     # Check if uv is installed
     try:
@@ -46,8 +46,8 @@ def main():
     print("\n✅ Setup complete!")
     print("\nNext steps:")
     print("1. Activate the virtual environment: source .venv/bin/activate")
-    print("2. Try the CLI: uv run wt --help")
-    print("3. Run the demo: uv run wt demo")
+    print("2. Try the CLI: uv run mux --help")
+    print("3. Run the demo: uv run mux demo")
 
 
 if __name__ == "__main__":

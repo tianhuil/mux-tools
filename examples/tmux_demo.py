@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Demo script showing wt-tools tmux functionality.
+Demo script showing mux-tools tmux functionality.
 
-This script demonstrates how to use the wt-tools tmux management features.
+This script demonstrates how to use the mux-tools tmux management features.
 """
 
 import subprocess
@@ -22,48 +22,48 @@ def run_command(cmd: str) -> str:
 
 def main():
     """Run the tmux demo."""
-    print("🐍 wt-tools Tmux Demo")
+    print("🐍 mux-tools Tmux Demo")
     print("=" * 50)
     
-    # Check if wt command is available
-    wt_version = run_command("wt --version")
-    if wt_version:
-        print(f"✅ wt-tools version: {wt_version.strip()}")
+    # Check if mux command is available
+    mux_version = run_command("mux --version")
+    if mux_version:
+        print(f"✅ mux-tools version: {mux_version.strip()}")
     else:
-        print("❌ wt-tools not found. Please install it first.")
+        print("❌ mux-tools not found. Please install it first.")
         sys.exit(1)
     
     print("\n📋 Available Commands:")
     print("-" * 30)
     
     # Show help
-    help_output = run_command("wt --help")
+    help_output = run_command("mux --help")
     print(help_output)
     
     print("\n🔧 Session Management:")
     print("-" * 30)
-    session_help = run_command("wt session --help")
+    session_help = run_command("mux session --help")
     print(session_help)
     
     print("\n🪟 Window Management:")
     print("-" * 30)
-    window_help = run_command("wt window --help")
+    window_help = run_command("mux window --help")
     print(window_help)
     
     print("\n📝 Example Usage:")
     print("-" * 30)
     examples = [
-        "wt session new myproject     # Create and attach to new session",
-        "wt session attach myproject  # Attach to existing session", 
-        "wt session list             # List all sessions",
-        "wt session list-detailed    # List sessions with detailed info",
-        "wt session kill myproject   # Kill a specific session",
-        "wt session kill-all         # Kill all sessions",
-        "wt session kill-all -e current # Kill all except 'current'",
-        "wt window new               # Create new window",
-        "wt window goto 3            # Go to window 3",
-        "wt window close             # Close current window",
-        "wt window list              # List windows in current session"
+        "mux session new myproject     # Create and attach to new session",
+        "mux session attach myproject  # Attach to existing session", 
+        "mux session list             # List all sessions",
+        "mux session list-detailed    # List sessions with detailed info",
+        "mux session kill myproject   # Kill a specific session",
+        "mux session kill-all         # Kill all sessions",
+        "mux session kill-all -e current # Kill all except 'current'",
+        "mux window new               # Create new window",
+        "mux window goto 3            # Go to window 3",
+        "mux window close             # Close current window",
+        "mux window list              # List windows in current session"
     ]
     
     for example in examples:
@@ -71,14 +71,14 @@ def main():
     
     print("\n🎯 Try it out:")
     print("-" * 30)
-    print("1. Start a new session: wt session new demo")
-    print("2. Create a new window: wt window new")
-    print("3. List windows: wt window list")
-    print("4. Switch to window 1: wt window goto 1")
-    print("5. List sessions: wt session list")
-    print("6. List detailed sessions: wt session list-detailed")
-    print("7. Kill a session: wt session kill demo")
-    print("8. Kill all sessions: wt session kill-all")
+    print("1. Start a new session: mux session new demo")
+    print("2. Create a new window: mux window new")
+    print("3. List windows: mux window list")
+    print("4. Switch to window 1: mux window goto 1")
+    print("5. List sessions: mux session list")
+    print("6. List detailed sessions: mux session list-detailed")
+    print("7. Kill a session: mux session kill demo")
+    print("8. Kill all sessions: mux session kill-all")
     
     print("\n✨ Demo completed!")
 

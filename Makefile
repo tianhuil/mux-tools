@@ -62,7 +62,7 @@ build:
 
 # Run the main module
 run:
-	uv run wt --help
+	uv run mux --help
 
 # Initial project setup
 setup: install-dev

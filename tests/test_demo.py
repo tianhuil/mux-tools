@@ -5,7 +5,7 @@ This module demonstrates testing with pytest and Python 3.10+ features.
 """
 
 import pytest
-from wt_tools.demo import greet, process_data, calculate_stats
+from mux.demo import greet, process_data, calculate_stats
 
 
 class TestGreet:

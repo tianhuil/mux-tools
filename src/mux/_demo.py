@@ -129,7 +129,7 @@ def greet_cli() -> int:
     CLI wrapper for the greet function.
     
     This function is referenced in pyproject.toml under [project.scripts]
-    as "wt-greet = 'wt_tools.demo:greet_cli'"
+    as "mux-greet = 'mux.demo:greet_cli'"
     
     Returns:
         Exit code (0 for success, non-zero for error)
@@ -156,7 +156,7 @@ def stats_cli() -> int:
     CLI wrapper for the calculate_stats function.
     
     This function is referenced in pyproject.toml under [project.scripts]
-    as "wt-stats = 'wt_tools.demo:stats_cli'"
+    as "mux-stats = 'mux.demo:stats_cli'"
     
     Returns:
         Exit code (0 for success, non-zero for error)
