@@ -63,8 +63,9 @@ def goto(window_index: int) -> None:
 
 
 @click.command()
-def close() -> None:
-    """Close the current window."""
+@click.argument('window_index', type=int, required=False)
+def close(window_index: int | None) -> None:
+    """Close a specific window by index, or the current window if no index provided."""
     try:
         # Find the currently attached session
         current_session = get_current_session()
@@ -72,9 +73,28 @@ def close() -> None:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
         
-        current_window = current_session.active_window
-        window_name = current_window.window_name
-        window_index = current_window.window_index
+        # If no window index provided, use current window
+        if window_index is None:
+            target_window = current_session.active_window
+            window_name = target_window.window_name
+            actual_window_index = target_window.window_index
+            console.print(f"[blue]Closing current window {actual_window_index}: {window_name}[/blue]")
+        else:
+            # Find window by index
+            found_window = current_session.find_where({"window_index": str(window_index)})
+            if not found_window:
+                console.print(f"[red]Window {window_index} not found[/red]")
+                console.print("[yellow]Available windows:[/yellow]")
+                for w in current_session.windows:
+                    console.print(f"  {w.window_index}: {w.window_name}")
+                sys.exit(1)
+            target_window = found_window
+            window_name = target_window.window_name
+            actual_window_index = target_window.window_index
+
+        if not actual_window_index:
+            console.print("[red]Window index not found[/red]")
+            sys.exit(1)
         
         # Check if this is the last window
         if len(current_session.windows) == 1:
@@ -84,8 +104,8 @@ def close() -> None:
                 console.print("[yellow]Window close cancelled[/yellow]")
                 return
         
-        current_window.kill()
-        console.print(f"[green]Closed window {window_index}: {window_name}[/green]")
+        target_window.kill()
+        console.print(f"[green]Closed window {actual_window_index}: {window_name}[/green]")
         
     except Exception as e:
         console.print(f"[red]Error closing window: {e}[/red]")
