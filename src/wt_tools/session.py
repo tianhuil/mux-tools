@@ -61,7 +61,8 @@ def attach(session_name: str) -> None:
 
 
 @click.command()
-def list_sessions() -> None:
+@click.option('--detailed', '-d', is_flag=True, help='Show detailed session information including windows')
+def list(detailed: bool) -> None:
     """List all available tmux sessions."""
     try:
         server = libtmux.Server()
@@ -71,22 +72,46 @@ def list_sessions() -> None:
             console.print("[yellow]No tmux sessions found[/yellow]")
             return
         
-        console.print("[bold]Available tmux sessions:[/bold]")
-        for session in sessions:
-            # Get session details
-            status = "[green]●[/green]" if session.session_attached else "[gray]○[/gray]"
-            window_count = len(session.windows)
-            creation_time = getattr(session, 'session_created', 'Unknown')
+        if detailed:
+            console.print("[bold]Detailed tmux session information:[/bold]")
+            console.print()
             
-            # Format creation time if available
-            if creation_time != 'Unknown':
-                try:
-                    from datetime import datetime
-                    creation_time = datetime.fromtimestamp(int(creation_time)).strftime('%Y-%m-%d %H:%M')
-                except (ValueError, TypeError):
-                    creation_time = 'Unknown'
-            
-            console.print(f"  {status} {session.session_name} ({window_count} windows, created: {creation_time})")
+            for session in sessions:
+                # Session header
+                status_icon = "[green]●[/green]" if session.session_attached else "[gray]○[/gray]"
+                status_text = "Attached" if session.session_attached else "Detached"
+                
+                console.print(f"{status_icon} [bold]{session.session_name}[/bold] - {status_text}")
+                
+                # Session details
+                window_count = len(session.windows)
+                console.print(f"  Windows: {window_count}")
+                
+                # Show windows in this session
+                if session.windows:
+                    console.print("  Window list:")
+                    for window in session.windows:
+                        window_status = "[green]●[/green]" if window.window_active else "[gray]○[/gray]"
+                        console.print(f"    {window_status} {window.window_index}: {window.window_name}")
+                
+                console.print()  # Empty line between sessions
+        else:
+            console.print("[bold]Available tmux sessions:[/bold]")
+            for session in sessions:
+                # Get session details
+                status = "[green]●[/green]" if session.session_attached else "[gray]○[/gray]"
+                window_count = len(session.windows)
+                creation_time = getattr(session, 'session_created', 'Unknown')
+                
+                # Format creation time if available
+                if creation_time != 'Unknown':
+                    try:
+                        from datetime import datetime
+                        creation_time = datetime.fromtimestamp(int(creation_time)).strftime('%Y-%m-%d %H:%M')
+                    except (ValueError, TypeError):
+                        creation_time = 'Unknown'
+                
+                console.print(f"  {status} {session.session_name} ({window_count} windows, created: {creation_time})")
             
     except Exception as e:
         console.print(f"[red]Error listing sessions: {e}[/red]")
@@ -94,54 +119,50 @@ def list_sessions() -> None:
 
 
 @click.command()
-def list_detailed() -> None:
-    """List all tmux sessions with detailed information."""
-    try:
-        server = libtmux.Server()
-        sessions = server.sessions
-        
-        if not sessions:
-            console.print("[yellow]No tmux sessions found[/yellow]")
-            return
-        
-        console.print("[bold]Detailed tmux session information:[/bold]")
-        console.print()
-        
-        for session in sessions:
-            # Session header
-            status_icon = "[green]●[/green]" if session.session_attached else "[gray]○[/gray]"
-            status_text = "Attached" if session.session_attached else "Detached"
-            
-            console.print(f"{status_icon} [bold]{session.session_name}[/bold] - {status_text}")
-            
-            # Session details
-            window_count = len(session.windows)
-            console.print(f"  Windows: {window_count}")
-            
-            # Show windows in this session
-            if session.windows:
-                console.print("  Window list:")
-                for window in session.windows:
-                    window_status = "[green]●[/green]" if window.window_active else "[gray]○[/gray]"
-                    console.print(f"    {window_status} {window.window_index}: {window.window_name}")
-            
-            console.print()  # Empty line between sessions
-            
-    except Exception as e:
-        console.print(f"[red]Error listing detailed sessions: {e}[/red]")
-        sys.exit(1)
-
-
-@click.command()
 @click.argument('session_name')
 @click.option('-f', '--force', is_flag=True, help='Force kill without confirmation')
 def kill(session_name: str, force: bool) -> None:
-    """Kill a specific tmux session."""
+    """Kill a specific tmux session or all sessions if session_name is '-'."""
     try:
         server = libtmux.Server()
-        session = server.find_where({"session_name": session_name})
         
-        if not session:
+        # Special case: '-' means kill all sessions
+        if session_name == '-':
+            sessions = server.sessions
+            
+            if not sessions:
+                console.print("[yellow]No tmux sessions found[/yellow]")
+                return
+            
+            # Show what will be killed
+            console.print(f"[yellow]Will kill {len(sessions)} session(s):[/yellow]")
+            for session in sessions:
+                status = " (attached)" if session.session_attached else ""
+                console.print(f"  - {session.session_name}{status}")
+            
+            if not force:
+                response = input("Are you sure? (y/N): ")
+                if response.lower() != 'y':
+                    console.print("[yellow]Session kill cancelled[/yellow]")
+                    return
+            
+            # Kill sessions
+            killed_count = 0
+            for session in sessions:
+                try:
+                    session.kill_session()
+                    killed_count += 1
+                    console.print(f"[green]Killed session '{session.session_name}'[/green]")
+                except Exception as e:
+                    console.print(f"[red]Error killing session '{session.session_name}': {e}[/red]")
+            
+            console.print(f"[green]Killed {killed_count} sessions[/green]")
+            return
+        
+        # Normal case: kill specific session
+        found_session = server.find_where({"session_name": session_name})
+        
+        if found_session is None:
             console.print(f"[red]Session '{session_name}' not found[/red]")
             console.print("[yellow]Available sessions:[/yellow]")
             for s in server.sessions:
@@ -149,14 +170,14 @@ def kill(session_name: str, force: bool) -> None:
             sys.exit(1)
         
         # Check if session is attached and warn user
-        if session.session_attached and not force:
+        if found_session.session_attached and not force:
             console.print(f"[yellow]Warning: Session '{session_name}' is currently attached.[/yellow]")
             response = input("Are you sure you want to kill it? (y/N): ")
             if response.lower() != 'y':
                 console.print("[yellow]Session kill cancelled[/yellow]")
                 return
         
-        session.kill_session()
+        found_session.kill_session()
         console.print(f"[green]Killed session '{session_name}'[/green]")
         
     except Exception as e:

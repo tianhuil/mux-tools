@@ -33,8 +33,7 @@ def session_group() -> None:
 
 session_group.add_command(session.new, 'new')
 session_group.add_command(session.attach, 'attach')
-session_group.add_command(session.list_sessions, 'list')
-session_group.add_command(session.list_detailed, 'list-detailed')
+session_group.add_command(session.list, 'list')
 session_group.add_command(session.kill, 'kill')
 session_group.add_command(session.kill_all, 'kill-all')
 
