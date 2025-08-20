@@ -43,12 +43,10 @@ def goto(window_index: int) -> None:
         server = libtmux.Server()
         
         # Find the currently attached session
-        attached_sessions = server.sessions.filter(session_attached=True)
-        if not attached_sessions:
+        current_session = get_current_session()
+        if not current_session:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
-        
-        current_session = attached_sessions[0]
         
         # Find window by index
         window = current_session.find_where({"window_index": window_index})
@@ -74,12 +72,11 @@ def close() -> None:
         server = libtmux.Server()
         
         # Find the currently attached session
-        attached_sessions = server.sessions.filter(session_attached=True)
-        if not attached_sessions:
+        current_session = get_current_session()
+        if not current_session:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
         
-        current_session = attached_sessions[0]
         current_window = current_session.active_window
         window_name = current_window.window_name
         window_index = current_window.window_index
@@ -107,12 +104,11 @@ def list() -> None:
         server = libtmux.Server()
         
         # Find the currently attached session
-        attached_sessions = server.sessions.filter(session_attached=True)
-        if not attached_sessions:
+        current_session = get_current_session()
+        if not current_session:
             console.print("[red]Not in a tmux session[/red]")
             sys.exit(1)
         
-        current_session = attached_sessions[0]
         console.print(f"[bold]Windows in session '{current_session.session_name}':[/bold]")
         for window in current_session.windows:
             status = "[green]●[/green]" if window.window_active else "[gray]○[/gray]"
@@ -129,7 +125,7 @@ def create_window_group(cli_group: click.Group) -> click.Group:
     def window_group() -> None:
         """Window management commands."""
         pass
-    
+
     # Add aliases for window commands
     window_group.add_command(new, 'n')
     window_group.add_command(goto, 'g')
