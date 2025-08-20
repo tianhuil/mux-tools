@@ -53,7 +53,6 @@ def attach_session(session_name: str) -> None:
             sys.exit(1)
         
         session.attach_session()
-        console.print(f"[green]Attached to session '{session_name}'[/green]")
         
     except Exception as e:
         console.print(f"[red]Error attaching to session: {e}[/red]")
