@@ -31,6 +31,7 @@ dependencies = [
     "libtmux>=0.46.2",
     "rich>=13.0.0",
     "click>=8.0.0",
+    "click-aliases>=1.0.1",
 ]
 
 [project.scripts]
