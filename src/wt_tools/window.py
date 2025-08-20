@@ -4,7 +4,6 @@ Window management commands for wt-tools.
 This module provides Click commands for managing tmux windows.
 """
 
-import os
 import sys
 
 import click

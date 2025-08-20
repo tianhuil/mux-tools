@@ -62,7 +62,7 @@ def attach(session_name: str) -> None:
 
 @click.command()
 @click.option('--detailed', '-d', is_flag=True, help='Show detailed session information including windows')
-def list_sessions(detailed: bool) -> None:
+def list(detailed: bool) -> None:
     """List all available tmux sessions."""
     try:
         server = libtmux.Server()
