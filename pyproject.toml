@@ -70,11 +70,11 @@ cli = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/mux-tools"
-Repository = "https://github.com/yourusername/mux-tools"
+Homepage = "https://github.com/tianhuil/mux-tools"
+Repository = "https://github.com/tianhuil/mux-tools"
 Documentation = "https://mux-tools.readthedocs.io"
-"Bug Tracker" = "https://github.com/yourusername/mux-tools/issues"
-"Changelog" = "https://github.com/yourusername/mux-tools/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/tianhuil/mux-tools/issues"
+"Changelog" = "https://github.com/tianhuil/mux-tools/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mux", "src/tree"]

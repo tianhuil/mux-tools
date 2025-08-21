@@ -31,7 +31,7 @@ This project is configured for **Python 3.10** and above. The `pyproject.toml` s
 
 1. **Clone the repository**:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/tianhuil/mux-tools.git
    cd mux-tools
    ```
 
@@ -89,7 +89,7 @@ pip install mux-tools
 
 ### From source
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/tianhuil/mux-tools.git
 cd mux-tools
 uv pip install -e .
 ```
