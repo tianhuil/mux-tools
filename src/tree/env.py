@@ -68,21 +68,19 @@ async def start_docker_environment(config: TreeConfig) -> None:
             print(f"Running setup command: {cmd}")
             container = container.with_exec(cmd.split())
 
-        # Start interactive shell
-        print(f"Starting interactive shell in Docker container...")
+        # Save the container as a Docker image
+        image_name = f"mux-env-{config.repo_name}-{env_name}"
+        print(f"Saving container as Docker image: {image_name}")
+        
+        # Publish the container as a Docker image
+        image_ref = await container.publish(image_name)
+        print(f"Container saved as: {image_ref}")
+        
         print(f"Environment name: {env_name}")
         print(f"Work directory: /work_dir")
         print(f"Base directory mounted at: /base_dir")
-
-        # Note: dagger doesn't support interactive mode directly
-        # We'll need to use a different approach for interactive mode
-        # For now, we'll just show the container info
-        print("Container prepared successfully!")
-        print("To enter interactive mode, you can:")
-        print(
-            f"1. Use: docker run -it --rm -v {current_dir}:/base_dir {config.docker_image} /bin/sh"
-        )
-        print(f"2. Or use the worktree at: /work_dir")
+        print("To run the container in interactive mode:")
+        print(f"docker run -it --rm -v {current_dir}:/base_dir {image_ref} /bin/sh")
 
 
 async def start(config_path: str | Path | None = None) -> None:
