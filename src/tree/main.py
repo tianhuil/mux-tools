@@ -17,7 +17,7 @@ console = Console()
 @click.group()
 def main() -> None:
     """Tree command for environment management and visualization."""
-    pass
+    click.echo("Running main command")
 
 
 

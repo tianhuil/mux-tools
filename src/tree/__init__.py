@@ -8,9 +8,9 @@ __version__ = "0.1.0"
 __author__ = "Your Name"
 __email__ = "your.email@example.com"
 
-from .main import main
 from .config import TreeConfig, load_tree_config
-from .env import ensure_tmux, generate_env_name, start
+from .env import start
+from .main import main
 
 __all__ = [
     "__version__",
