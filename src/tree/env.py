@@ -74,14 +74,14 @@ async def start_docker_environment(config: TreeConfig) -> None:
         image_ref = await container.publish(image_name)
         print(f"Container saved as: {image_ref}")
         
-        # Run the container in interactive mode
-        import subprocess
-        print(f"Starting interactive shell in container...")
-        subprocess.run([
-            "docker", "run", "-it", "--rm", 
-            "-v", f"{current_dir}:/base_dir",
-            image_ref, "/bin/sh"
-        ])
+    # Run the container in interactive mode
+    import subprocess
+    print(f"Starting interactive shell in container...")
+    subprocess.run([
+        "docker", "run", "-it", "--rm", 
+        "-v", f"{current_dir}:/base_dir",
+        image_ref, "/bin/sh"
+    ])
 
 
 async def start(config_path: str | Path | None = None) -> None:
