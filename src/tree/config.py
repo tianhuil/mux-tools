@@ -20,6 +20,11 @@ class TreeConfig(BaseModel):
         description="Remote repository URL"
     )
 
+    docker_image: str = Field(
+        default="alpine:latest",
+        description="Docker image to use"
+    )
+
     repo_name: str = Field(
         default="",
         description="Repository name"
@@ -143,6 +148,7 @@ def create_sample_config(path: str | Path) -> None:
     """
     sample_config = TreeConfig(
         remote_repo="https://github.com/example/repo.git",
+        docker_image="alpine:latest",
         repo_name="repo_name",
         default_branch="main",
         setup_cmds=["npm install", "pip install -r requirements.txt"],
