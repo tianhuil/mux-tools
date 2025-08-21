@@ -56,8 +56,6 @@ async def start_docker_environment(config: TreeConfig) -> None:
         # Install git if not already present
         container = container.with_exec(["sh", "-c", "which git || (apt-get update && apt-get install -y git) || (yum install -y git) || (apk add git)"])
 
-        container = container.with_exec(["git", "-C", "/base_dir", "status"])
-        
         # Create work directory
         container = container.with_workdir("/work_dir")
 
