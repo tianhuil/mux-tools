@@ -48,6 +48,9 @@ async def start_docker_environment(config: TreeConfig) -> None:
         # Pull the Docker image
         container = client.container().from_(config.docker_image)
 
+        # Install git if not already present
+        container = container.with_exec(["sh", "-c", "which git || (apt-get update && apt-get install -y git) || (yum install -y git) || (apk add git)"])
+        
         # Mount current directory to /base_dir
         container = container.with_mounted_directory(
             "/base_dir", client.host().directory(str(current_dir))
