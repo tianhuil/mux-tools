@@ -19,6 +19,11 @@ class TreeConfig(BaseModel):
         default="",
         description="Remote repository URL"
     )
+
+    repo_name: str = Field(
+        default="",
+        description="Repository name"
+    )
     
     default_branch: str = Field(
         default="main",
@@ -138,6 +143,7 @@ def create_sample_config(path: str | Path) -> None:
     """
     sample_config = TreeConfig(
         remote_repo="https://github.com/example/repo.git",
+        repo_name="repo_name",
         default_branch="main",
         setup_cmds=["npm install", "pip install -r requirements.txt"],
         validation_cmds=["npm test", "python -m pytest"]
