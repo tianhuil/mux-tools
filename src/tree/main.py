@@ -13,13 +13,10 @@ from .env import start
 
 console = Console()
 
-
 @click.group()
 def main() -> None:
     """Tree command for environment management and visualization."""
-    click.echo("Running main command")
-
-
+    pass
 
 
 @main.command()
@@ -34,6 +31,11 @@ def start_env(config: str | None) -> None:
         import sys
         sys.exit(1)
 
+
+@main.command()
+def sample() -> None:
+    """Tree command for environment management and visualization."""
+    click.echo("Running sample command")
 
 if __name__ == "__main__":
     main()
