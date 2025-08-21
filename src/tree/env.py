@@ -63,8 +63,12 @@ async def start_docker_environment(config: TreeConfig) -> None:
 
         # Run setup commands
         for cmd in config.setup_cmds:
+            if cmd.startswith("#"):
+                continue
+
             print(f"Running setup command: {cmd}")
-            container = container.with_exec(cmd.split())
+            # Use shell to execute commands that may contain operators like &&
+            container = container.with_exec(["sh", "-c", cmd])
 
         # Save the container as a Docker image
         image_name = f"mux-env-{config.repo_name}-{env_name}"
