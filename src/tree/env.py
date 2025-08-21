@@ -70,13 +70,14 @@ async def start_docker_environment(config: TreeConfig) -> None:
             # Use shell to execute commands that may contain operators like &&
             container = container.with_exec(["sh", "-c", cmd])
 
-        # Save the container as a Docker image
+        # Build the container as a local Docker image
         image_name = f"mux-env-{config.repo_name}-{env_name}"
-        print(f"Saving container as Docker image: {image_name}")
+        print(f"Building container as Docker image: {image_name}")
         
-        # Publish the container as a Docker image
-        image_ref = await container.publish(image_name)
-        print(f"Container saved as: {image_ref}")
+        # Export the container as a local Docker image with the specified tag
+        await container.export_image(image_name)
+        
+        print(f"Container built as local image: {image_name}")
         
     # Run the container in interactive mode
     import subprocess
@@ -84,7 +85,7 @@ async def start_docker_environment(config: TreeConfig) -> None:
     subprocess.run([
         "docker", "run", "-it", "--rm", 
         "-v", f"{current_dir}:/base_dir",
-        image_ref, "/bin/sh"
+        image_name, "/bin/sh"
     ])
 
 
