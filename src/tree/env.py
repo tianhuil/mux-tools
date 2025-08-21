@@ -8,7 +8,7 @@ for development workflows.
 import sys
 from pathlib import Path
 
-import randomname  # type: ignore
+import coolname  # type: ignore
 
 from .config import TreeConfig, load_tree_config
 
@@ -19,9 +19,7 @@ def generate_env_name() -> str:
     Returns:
         A memorable 3-word name like 'cobra-felix-amateur'
     """
-    # Generate 3 words using randomname
-    # We'll use a verb, adjective, and noun to create memorable names
-    name = randomname.generate("v", "adj", "n")
+    name = coolname.generate_slug(3)
     return str(name)
 
 
@@ -76,11 +74,14 @@ async def start_docker_environment(config: TreeConfig) -> None:
         image_ref = await container.publish(image_name)
         print(f"Container saved as: {image_ref}")
         
-        print(f"Environment name: {env_name}")
-        print(f"Work directory: /work_dir")
-        print(f"Base directory mounted at: /base_dir")
-        print("To run the container in interactive mode:")
-        print(f"docker run -it --rm -v {current_dir}:/base_dir {image_ref} /bin/sh")
+        # Run the container in interactive mode
+        import subprocess
+        print(f"Starting interactive shell in container...")
+        subprocess.run([
+            "docker", "run", "-it", "--rm", 
+            "-v", f"{current_dir}:/base_dir",
+            image_ref, "/bin/sh"
+        ])
 
 
 async def start(config_path: str | Path | None = None) -> None:
