@@ -701,7 +701,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "rich" },
-    { name = "types-pyyaml" },
 ]
 
 [package.optional-dependencies]
@@ -734,6 +733,7 @@ test = [
 [package.dev-dependencies]
 dev = [
     { name = "mypy" },
+    { name = "types-pyyaml" },
 ]
 
 [package.metadata]
@@ -760,12 +760,14 @@ requires-dist = [
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.0.0" },
     { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=1.3.0" },
     { name = "twine", marker = "extra == 'dev'", specifier = ">=4.0.0" },
-    { name = "types-pyyaml", specifier = ">=6.0.12.20250809" },
 ]
 provides-extras = ["dev", "test", "docs", "cli"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "mypy", specifier = ">=1.17.1" }]
+dev = [
+    { name = "mypy", specifier = ">=1.17.1" },
+    { name = "types-pyyaml", specifier = ">=6.0.12.20250809" },
+]
 
 [[package]]
 name = "mypy"
