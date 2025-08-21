@@ -56,10 +56,8 @@ async def start_docker_environment(config: TreeConfig) -> None:
         # Create work directory
         container = container.with_workdir("/work_dir")
 
-        # Create worktree from /base_dir if remote_repo is provided
-        if config.remote_repo:
-            # Create worktree at /work_dir with a new branch
-            container = container.with_exec(["git", "-C", "/base_dir", "worktree", "add", "/work_dir", env_name])
+        # Create worktree from /base_dir
+        container = container.with_exec(["git", "-C", "/base_dir", "worktree", "add", "/work_dir", env_name])
 
         # Run setup commands
         for cmd in config.setup_cmds:
@@ -75,6 +73,7 @@ async def start_docker_environment(config: TreeConfig) -> None:
         print(f"Building container as Docker image: {image_name}")
         
         # Export the container as a local Docker image with the specified tag
+        # Ignore the return value as it's expected to be None/Void
         await container.export_image(image_name)
         
         print(f"Container built as local image: {image_name}")
