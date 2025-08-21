@@ -37,6 +37,8 @@ dependencies = [
 [project.scripts]
 mux = "mux.main:main"
 m = "mux.main:main"
+tree = "tree.main:main"
+t = "tree.main:main"
 
 [project.optional-dependencies]
 dev = [
@@ -75,7 +77,7 @@ Documentation = "https://mux-tools.readthedocs.io"
 "Changelog" = "https://github.com/yourusername/mux-tools/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mux"]
+packages = ["src/mux", "src/tree"]
 
 [tool.hatch.build.targets.sdist]
 include = [
