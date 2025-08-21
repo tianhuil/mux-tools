@@ -43,24 +43,26 @@ async def start_docker_environment(config: TreeConfig) -> None:
     # Get current directory
     current_dir = Path.cwd()
 
-    # Start dagger client
-    async with dagger.Connection() as client:
+    # Start dagger client with verbose logging
+    async with dagger.Connection(dagger.Config(log_output=sys.stdout, workdir=str(current_dir))) as client:
         # Pull the Docker image
         container = client.container().from_(config.docker_image)
 
-        # Install git if not already present
-        container = container.with_exec(["sh", "-c", "which git || (apt-get update && apt-get install -y git) || (yum install -y git) || (apk add git)"])
-        
         # Mount current directory to /base_dir
         container = container.with_mounted_directory(
             "/base_dir", client.host().directory(str(current_dir))
         )
 
+        # Install git if not already present
+        container = container.with_exec(["sh", "-c", "which git || (apt-get update && apt-get install -y git) || (yum install -y git) || (apk add git)"])
+
+        container = container.with_exec(["git", "-C", "/base_dir", "status"])
+        
         # Create work directory
         container = container.with_workdir("/work_dir")
 
         # Create worktree from /base_dir
-        container = container.with_exec(["git", "-C", "/base_dir", "worktree", "add", "/work_dir", env_name])
+        container = container.with_exec(["git", "-C", "/base_dir", "worktree", "add", "/work_dir", "-b", env_name])
 
         # Run setup commands
         for cmd in config.setup_cmds:
