@@ -58,12 +58,10 @@ async def start_docker_environment(config: TreeConfig) -> None:
         # Create work directory
         container = container.with_workdir("/work_dir")
 
-        # Clone the repository if remote_repo is provided
+        # Create worktree from /base_dir if remote_repo is provided
         if config.remote_repo:
-            container = container.with_exec(["git", "clone", config.remote_repo, "."])
-
-            # Create and checkout the branch
-            container = container.with_exec(["git", "checkout", "-b", env_name])
+            # Create worktree at /work_dir with a new branch
+            container = container.with_exec(["git", "-C", "/base_dir", "worktree", "add", "/work_dir", env_name])
 
         # Run setup commands
         for cmd in config.setup_cmds:
