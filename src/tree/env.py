@@ -15,6 +15,29 @@ import coolname  # type: ignore
 from .config import TreeConfig, load_tree_config
 
 
+def is_dagger_type_error(error: Exception) -> bool:
+    """Check if the error is the specific Dagger type checking issue.
+    
+    Args:
+        error: The exception to check
+        
+    Returns:
+        True if it's the Dagger type checking error, False otherwise
+    """
+    error_type = type(error).__name__
+    error_msg = str(error)
+    
+    # Check for the specific Dagger type checking error patterns
+    dagger_error_patterns = [
+        "BeartypeCallHintReturnViolation",
+        "dagger.Void",
+        "expected to be of type",
+        "return.*None.*expected"
+    ]
+    
+    return any(pattern in error_type or pattern in error_msg for pattern in dagger_error_patterns)
+
+
 def generate_env_name() -> str:
     """Generate a 3-word memorable name.
 
@@ -155,8 +178,14 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
             image_name = f"mux-env-{config.repo_name}-{env_name}"
             print(f"Building container as Docker image: {image_name}")
             
-            # Export the container as a local Docker image with the specified tag
-            await container.export_image(f"{image_name}")
+            try:
+                await container.export_image(f"{image_name}")
+            except Exception as e:
+                if is_dagger_type_error(e):
+                    print(f"Warning: Dagger type checking issue detected (this is expected): {type(e).__name__}")
+                    print(f"Error details: {str(e)}")
+                else:
+                    raise
 
             print(f"Container loaded as Docker image: {image_name}")
             return image_name
