@@ -78,7 +78,7 @@ def join(env: str, config: str | None) -> None:
 @click.argument("env", type=str, required=True)
 @click.option("--config", "-c", type=str, help="Path to configuration file")
 def remove(env: str, config: str | None) -> None:
-    """Stop an environment."""
+    """Remove an environment."""
     environment = Environment.load_from_config(config, env)
     asyncio.run(environment.remove())
 
