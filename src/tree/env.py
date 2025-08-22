@@ -36,7 +36,7 @@ class EnvironmentConfig:
         return str(name)
 
     @property
-    def repo_path(self) -> Path:
+    def repo_dir(self) -> Path:
         """Get the repository name.
         
         Returns:
@@ -54,7 +54,7 @@ class EnvironmentConfig:
         Returns:
             Path to the worktree directory
         """
-        return self.repo_path / self.env_name
+        return self.repo_dir / self.env_name
 
     @property
     def image_name(self) -> str:
@@ -71,7 +71,7 @@ class EnvironmentConfig:
         Returns:
             List of Environment objects representing worktree directories
         """
-        work_paths = list(self.repo_path.glob("*"))
+        work_paths = list(self.repo_dir.glob("*"))
         return [EnvironmentConfig(self.config, work_path.name)  for work_path in work_paths]
 
 
@@ -127,7 +127,7 @@ class Environment:
             RuntimeError: If git clone or checkout fails
         """
         work_path = self.env_config.work_path
-        repo_path = self.env_config.repo_path
+        repo_path = self.env_config.config.repo_path
         env_name = self.env_config.env_name
         
         # Create the directory structure
