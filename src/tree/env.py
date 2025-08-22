@@ -248,21 +248,9 @@ async def start(config_path: str | Path | None = None) -> None:
         RuntimeError: If any step of the environment setup fails
     """
     try:
-        # Load configuration
-        console.print("Loading configuration...")
-        config = load_tree_config(config_path)
+        env = Environment(load_tree_config(config_path))
         
-        if not config.repo_path:
-            raise RuntimeError("repo_path is required in configuration")
-        
-        if not config.repo_name:
-            raise RuntimeError(f"Could not extract repo_name from repo_path: {config.repo_path}")
-
-        # Setup work repository
-        env = Environment(config)
         work_path = setup_work_repo(env)
-        
-        # Start Docker environment
         image_name = await start_docker_environment(env)
 
         # Start interactive shell
@@ -275,3 +263,16 @@ async def start(config_path: str | Path | None = None) -> None:
         
     except Exception as e:
         raise RuntimeError(f"Failed to start environment: {str(e)}") from e
+
+async def list_work_trees(config_path: str | Path | None = None) -> list[Environment]:
+    """List all worktrees for the current user.
+    
+    Returns:
+        List of Environment objects representing worktree directories
+    """
+    try:
+        env = Environment(load_tree_config(config_path))
+        return env.list_work_trees()
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to list worktrees: {str(e)}") from e
