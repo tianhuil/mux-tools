@@ -11,8 +11,12 @@ from pathlib import Path
 
 import click
 import coolname  # type: ignore
+from rich.console import Console
 
 from .config import TreeConfig, load_tree_config
+
+# Initialize console for rich output
+console = Console()
 
 
 def is_superfluous_dagger_error(error: Exception) -> bool:
@@ -84,10 +88,10 @@ def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
     
     # Check if repository already exists
     if work_path.exists():
-        print(f"Repository already exists at {work_path}")
+        console.print(f"Repository already exists at {work_path}")
         return work_path
     
-    print(f"Cloning repository from {config.repo_path} to {work_path}")
+    console.print(f"Cloning repository from {config.repo_path} to {work_path}")
     
     # Clone the repository
     try:
@@ -97,20 +101,20 @@ def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
             text=True,
             check=True
         )
-        print(f"Repository cloned successfully: {result.stdout}")
+        console.print(f"Repository cloned successfully: {result.stdout}")
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Failed to clone repository from {config.repo_path}: {e.stderr}") from e
     
     # Create and checkout the new branch
     try:
-        print(f"Creating new branch: {env_name}")
+        console.print(f"Creating new branch: {env_name}")
         result = subprocess.run(
             ["git", "-C", work_path, "checkout", "-b", env_name],
             capture_output=True,
             text=True,
             check=True
         )
-        print(f"Branch created successfully: {result.stdout}")
+        console.print(f"Branch created successfully: {result.stdout}")
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Failed to create branch {env_name}: {e.stderr}") from e
     
@@ -143,13 +147,13 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
     if not work_path.exists():
         raise RuntimeError(f"Work path does not exist: {work_path}")
 
-    print(f"Starting Docker environment for {config.repo_name} at {work_path}")
+    console.print(f"Starting Docker environment for {config.repo_name} at {work_path}")
     
     # Start dagger client with verbose logging
     async with dagger.Connection(dagger.Config(log_output=sys.stdout)) as client:
         try:
             # Pull the Docker image
-            print(f"Pulling Docker image: {config.docker_image}")
+            console.print(f"Pulling Docker image: {config.docker_image}")
             container = client.container().from_(config.docker_image)
 
             # Mount the worktree directory to /work_dir
@@ -161,7 +165,7 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
             container = container.with_workdir("/work_dir")
 
             # Install git if not already present
-            print("Installing git...")
+            console.print("Installing git...")
             container = container.with_exec([
                 "sh", "-c", 
                 "which git || (apt-get update && apt-get install -y git) || (yum install -y git) || (apk add git)"
@@ -172,24 +176,24 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
                 if cmd.startswith("#"):
                     continue
 
-                print(f"Running setup command {i}/{len(config.setup_cmds)}: {cmd}")
+                console.print(f"Running setup command {i}/{len(config.setup_cmds)}: {cmd}")
                 # Use shell to execute commands that may contain operators like &&
                 container = container.with_exec(["sh", "-c", cmd])
 
             # Build the container as a local Docker image
             image_name = f"mux-env-{config.repo_name}-{env_name}"
-            print(f"Building container as Docker image: {image_name}")
+            console.print(f"Building container as Docker image: {image_name}")
             
             try:
                 await container.export_image(f"{image_name}")
             except Exception as e:
                 if is_superfluous_dagger_error(e):
-                    print(f"Warning: Dagger type checking issue detected (this is expected): {type(e).__name__}")
-                    print(f"Error details: {str(e)}")
+                    console.print(f"[yellow]Warning: Dagger type checking issue detected (this is expected): {type(e).__name__}[/yellow]")
+                    console.print(f"[dim]Error details: {str(e)}[/dim]")
                 else:
                     raise
 
-            print(f"Container loaded as Docker image: {image_name}")
+            console.print(f"Container loaded as Docker image: {image_name}")
             return image_name
             
         except Exception as e:
@@ -209,7 +213,7 @@ async def start(config_path: str | Path | None = None) -> None:
     """
     try:
         # Load configuration
-        print("Loading configuration...")
+        console.print("Loading configuration...")
         config = load_tree_config(config_path)
         
         if not config.repo_path:
@@ -220,7 +224,7 @@ async def start(config_path: str | Path | None = None) -> None:
 
         # Generate environment name
         env_name = generate_env_name()
-        print(f"Generated environment name: {env_name}")
+        console.print(f"Generated environment name: {env_name}")
         
         # Setup work repository
         work_path = setup_work_repo(config, env_name)
@@ -229,7 +233,7 @@ async def start(config_path: str | Path | None = None) -> None:
         image_name = await start_docker_environment(config, env_name)
 
         # Start interactive shell
-        print(f"Starting interactive shell in container...")
+        console.print(f"Starting interactive shell in container...")
         subprocess.run([
             "docker", "run", "-it", "--rm", 
             "-v", f"{work_path}:/work_dir",
