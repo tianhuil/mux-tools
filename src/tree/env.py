@@ -37,7 +37,7 @@ class EnvironmentConfig:
 
     @property
     def repo_dir(self) -> Path:
-        """Get the repository name.
+        """The repository directory.
         
         Returns:
             The repository name
@@ -45,11 +45,17 @@ class EnvironmentConfig:
         return Path.home() / ".config" / "tree" / "work" / self.config.repo_name
 
     @property
-    def work_path(self) -> Path:
-        """Get the path for the worktree.
+    def original_repo_path(self) -> Path:
+        """The original repository path.
         
-        Args:
-            env_name: Name of the environment / branch
+        Returns:
+            The original repository path
+        """
+        return Path(self.config.repo_path)
+
+    @property
+    def work_path(self) -> Path:
+        """The path for the worktree.
             
         Returns:
             Path to the worktree directory
@@ -58,7 +64,7 @@ class EnvironmentConfig:
 
     @property
     def image_name(self) -> str:
-        """Get the name of the Docker image.
+        """The name of the Docker image.
         
         Returns:
             The name of the Docker image
@@ -66,7 +72,7 @@ class EnvironmentConfig:
         return f"tree-env_{self.config.repo_name}_{self.env_name}"
 
     def list_work_trees(self) -> list['EnvironmentConfig']:
-        """List all worktrees for the current user.
+        """List all worktrees for the current repository.
         
         Returns:
             List of Environment objects representing worktree directories
@@ -127,7 +133,7 @@ class Environment:
             RuntimeError: If git clone or checkout fails
         """
         work_path = self.env_config.work_path
-        repo_path = self.env_config.config.repo_path
+        repo_path = self.env_config.original_repo_path
         env_name = self.env_config.env_name
         
         # Create the directory structure
