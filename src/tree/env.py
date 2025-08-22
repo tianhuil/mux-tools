@@ -56,14 +56,7 @@ class Environment:
         """
         return self.repo_path / self.env_name
 
-    def list_work_trees(self) -> list[Path]:
-        """List all worktrees for the current user.
-        
-        Returns:
-            List of Path objects representing worktree directories
-        """
-        return list(self.repo_path.glob("*"))
-
+    @property
     def image_name(self) -> str:
         """Get the name of the Docker image.
         
@@ -71,6 +64,15 @@ class Environment:
             The name of the Docker image
         """
         return f"tree-env_{self.config.repo_name}_{self.env_name}"
+
+    def list_work_trees(self) -> list['Environment']:
+        """List all worktrees for the current user.
+        
+        Returns:
+            List of Environment objects representing worktree directories
+        """
+        work_paths = list(self.repo_path.glob("*"))
+        return [Environment(self.config, work_path.name)  for work_path in work_paths]
 
 
 def is_superfluous_dagger_error(error: Exception) -> bool:
@@ -215,7 +217,7 @@ async def start_docker_environment(env: Environment) -> str:
                 container = container.with_exec(["sh", "-c", cmd])
 
             # Build the container as a local Docker image
-            image_name = env.image_name()
+            image_name = env.image_name
             console.print(f"Building container as Docker image: {image_name}")
             
             try:
