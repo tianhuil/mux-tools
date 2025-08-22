@@ -247,13 +247,81 @@ class Environment:
         self.setup_work_repo()
         await self.start_docker_environment()
 
+    async def remove_docker_environment(self) -> None:
+        """Stop Docker container and delete the image.
+        
+        Raises:
+            RuntimeError: If Docker operations fail
+        """
+        image_name = self.env_config.image_name
+        
+        console.print(f"Removing Docker image: {image_name}")
+        
+        # Stop any running containers using this image
+        try:
+            result = subprocess.run(
+                ["docker", "ps", "-q", "--filter", f"ancestor={image_name}"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            container_ids = result.stdout.strip().split('\n') if result.stdout.strip() else []
+            
+            for container_id in container_ids:
+                if container_id:
+                    console.print(f"Stopping container: {container_id}")
+                    subprocess.run(
+                        ["docker", "stop", container_id],
+                        capture_output=True,
+                        text=True,
+                        check=True
+                    )
+        except subprocess.CalledProcessError as e:
+            console.print(f"[yellow]Warning: Failed to stop containers: {e.stderr}[/yellow]")
+        
+        # Remove the Docker image
+        try:
+            result = subprocess.run(
+                ["docker", "rmi", image_name],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            console.print(f"Docker image removed successfully: {result.stdout}")
+        except subprocess.CalledProcessError as e:
+            console.print(f"[yellow]Warning: Failed to remove Docker image: {e.stderr}[/yellow]")
+
+    def remove_work_repo(self) -> None:
+        """Remove the work repository directory.
+        
+        Raises:
+            RuntimeError: If directory removal fails
+        """
+        work_path = self.env_config.work_path
+        
+        if not work_path.exists():
+            console.print(f"Work repository does not exist at {work_path}")
+            return
+        
+        console.print(f"Removing work repository: {work_path}")
+        
+        try:
+            import shutil
+            shutil.rmtree(work_path)
+            console.print(f"Work repository removed successfully")
+        except Exception as e:
+            raise RuntimeError(f"Failed to remove work repository: {str(e)}") from e
+
     async def remove(self) -> None:
         """Remove the environment.
         
-        Returns:
-            Name of the removed environment
+        This method:
+        1. Stops the Docker container and deletes the image
+        2. Removes the work repository directory
         """
-        pass
+        await self.remove_docker_environment()
+        self.remove_work_repo()
+
 
     async def start(self) -> None:
         """Main entry point for starting the environment.
