@@ -21,9 +21,9 @@ console = Console()
 class EnvironmentConfig:
     """Environment class for managing worktrees and Docker environments."""
 
-    def __init__(self, config: TreeConfig, env_name: str | None = None):
+    def __init__(self, config: TreeConfig, env_name: str):
         self.config = config
-        self.env_name = env_name or self.generate_env_name()
+        self.env_name = env_name
     
     @staticmethod
     def generate_env_name() -> str:
@@ -114,7 +114,7 @@ class Environment:
 
 
     @staticmethod
-    def load_from_config(config_path: str | Path | None = None) -> 'Environment':
+    def load_from_config(config_path: str | Path | None = None, env_name: str | None = None) -> 'Environment':
         """Load the environment configuration.
         
         Args:
@@ -123,7 +123,7 @@ class Environment:
         Returns:
             Environment object
         """
-        return Environment(EnvironmentConfig(load_tree_config(config_path)))
+        return Environment(EnvironmentConfig(load_tree_config(config_path), env_name or EnvironmentConfig.generate_env_name()))
 
 
     def _create_work_repo(self) -> None:

@@ -57,6 +57,23 @@ def list(config: str | None, detail: bool = False) -> None:
             console.print(f"[dim]Image: {env.image_name}[/dim]")
             console.print(f"[dim]Docker container: {env.image_name}[/dim]")
 
+
+@main.command()
+@click.argument('env', type=str, required=True)
+@click.option('--config', '-c', type=str, help='Path to configuration file')
+def join(env: str, config: str | None) -> None:
+    """Join an environment."""
+    environment = Environment.load_from_config(config, env)
+    environment.join()
+
+@main.command()
+@click.argument('env', type=str, required=True)
+@click.option('--config', '-c', type=str, help='Path to configuration file')
+def stop(env: str, config: str | None) -> None:
+    """Stop an environment."""
+    environment = Environment.load_from_config(config, env)
+    asyncio.run(environment.remove())  
+
 @main.command()
 def sample() -> None:
     """Tree command for environment management and visualization."""
