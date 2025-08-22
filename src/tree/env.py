@@ -327,13 +327,7 @@ class Environment:
         await self._remove_docker_environment()
         self._remove_work_repo()
 
-    async def start(self) -> None:
-        """Main entry point for starting the environment.
-
-        Args:
-            config_path: Optional path to configuration file
-        """
-        await self.create()
+    def join(self) -> None:
         work_path = self.env_config.work_path
         image_name = self.env_config.image_name
 
@@ -344,4 +338,13 @@ class Environment:
             "-v", f"{work_path}:/work_dir",
             image_name, "/bin/sh"
         ])
+
+    async def start(self) -> None:
+        """Main entry point for starting the environment.
+
+        Args:
+            config_path: Optional path to configuration file
+        """
+        await self.create()
+        self.join()
 
