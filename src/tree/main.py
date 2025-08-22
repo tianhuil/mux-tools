@@ -49,13 +49,13 @@ def list(config: str | None, detail: bool = False) -> None:
     """Create a new environment."""
     env_config = Environment.load_from_config(config).env_config
 
-    console.print(f"[bold]Environments for {env_config.config.repo_path}:[/bold]")
+    console.print(f"Environments for [bold][blue]{env_config.config.repo_name}[/blue]:[/bold]")
     for env in env_config.list_work_trees():
         console.print(f"[green]{env.env_name}[/green]")
         if detail:
-            console.print(f"[dim]Path: {env.work_path}[/dim]")
-            console.print(f"[dim]Image: {env.image_name}[/dim]")
-            console.print(f"[dim]Docker container: {env.image_name}[/dim]")
+            console.print(f"  [dim]Path: {env.work_path}[/dim]")
+            console.print(f"  [dim]Image: {env.image_name}[/dim]")
+            console.print(f"  [dim]Docker container: {env.image_name}[/dim]")
 
 
 @main.command()
