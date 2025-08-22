@@ -64,6 +64,14 @@ class Environment:
         """
         return list(self.repo_path.glob("*"))
 
+    def image_name(self) -> str:
+        """Get the name of the Docker image.
+        
+        Returns:
+            The name of the Docker image
+        """
+        return f"tree-env_{self.config.repo_name}_{self.env_name}"
+
 
 def is_superfluous_dagger_error(error: Exception) -> bool:
     """
@@ -207,7 +215,7 @@ async def start_docker_environment(env: Environment) -> str:
                 container = container.with_exec(["sh", "-c", cmd])
 
             # Build the container as a local Docker image
-            image_name = f"mux-env-{config.repo_name}-{env.env_name}"
+            image_name = env.image_name()
             console.print(f"Building container as Docker image: {image_name}")
             
             try:
