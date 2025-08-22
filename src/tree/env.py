@@ -120,7 +120,7 @@ class Environment:
         return Environment(EnvironmentConfig(load_tree_config(config_path)))
 
 
-    def setup_work_repo(self) -> None:
+    def create_work_repo(self) -> None:
         """Clone the repository to the specified directory.
         
         Raises:
@@ -166,7 +166,7 @@ class Environment:
             raise RuntimeError(f"Failed to create branch {env_name}: {e.stderr}") from e
 
 
-    async def start_docker_environment(self) -> None:
+    async def create_docker_environment(self) -> None:
         """Start Docker environment with the specified configuration.
 
         Raises:
@@ -244,8 +244,8 @@ class Environment:
         Returns:
             Name of the created environment
         """
-        self.setup_work_repo()
-        await self.start_docker_environment()
+        self.create_work_repo()
+        await self.create_docker_environment()
 
     async def remove_docker_environment(self) -> None:
         """Stop Docker container and delete the image.
