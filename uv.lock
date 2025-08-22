@@ -1001,6 +1001,7 @@ test = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "black" },
     { name = "mypy" },
     { name = "types-pyyaml" },
 ]
@@ -1036,6 +1037,7 @@ provides-extras = ["dev", "test", "docs", "cli"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "black", specifier = ">=25.1.0" },
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20250809" },
 ]

@@ -159,4 +159,4 @@ release = "0.1.0"
 html_theme = "sphinx_rtd_theme"
 
 [dependency-groups]
-dev = ["mypy>=1.17.1", "types-pyyaml>=6.0.12.20250809"]
+dev = ["black>=25.1.0", "mypy>=1.17.1", "types-pyyaml>=6.0.12.20250809"]

@@ -11,6 +11,6 @@
         }
     },
     "black-formatter.args": [],
-    "black-formatter.path": ["black"],
+    "black-formatter.path": ["uv", "run", "black"],
     "isort.args": ["--profile", "black"]
 }
