@@ -54,19 +54,14 @@ def generate_env_name() -> str:
     return str(name)
 
 
-def get_work_path(repo_name: str, env_name: str) -> Path:
-    """Get the path for the worktree.
+def list_work_trees() -> list[Path]:
+    """List all worktrees for the current user.
     
-    Args:
-        repo_name: Name of the repository
-        env_name: Name of the environment / branch
-        
     Returns:
-        Path to the worktree directory
+        List of Path objects representing worktree directories
     """
     config_dir = Path.home() / ".config" / "tree" / "worktrees"
-    worktree_path = config_dir / repo_name / env_name
-    return worktree_path
+    return list(config_dir.glob("*"))
 
 def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
     """Clone the repository to the specified directory.
@@ -81,7 +76,7 @@ def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
     Raises:
         RuntimeError: If git clone or checkout fails
     """
-    work_path = get_work_path(config.repo_name, env_name)
+    work_path = config.get_work_path(env_name)
     
     # Create the directory structure
     work_path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,7 +136,7 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
             "dagger package not found. Please install it with: pip install dagger-io"
         )
 
-    work_path = get_work_path(config.repo_name, env_name)
+    work_path = config.get_work_path(env_name)
     
     # Verify work path exists
     if not work_path.exists():
