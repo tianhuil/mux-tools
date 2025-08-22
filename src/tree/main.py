@@ -9,9 +9,12 @@ import asyncio
 import click
 from rich.console import Console
 
+from tree.config import ConfigLoader
+
 from .env import Environment, EnvironmentConfig
 
 console = Console()
+
 
 @click.group()
 def main() -> None:
@@ -20,7 +23,7 @@ def main() -> None:
 
 
 @main.command()
-@click.option('--config', '-c', type=str, help='Path to configuration file')
+@click.option("--config", "-c", type=str, help="Path to configuration file")
 def start(config: str | None) -> None:
     """Start development environment with tmux and Docker."""
     try:
@@ -30,26 +33,30 @@ def start(config: str | None) -> None:
         console.print(f"[red]Error starting environment: {e}[/red]")
         console.print(f"[yellow]Error type: {type(e).__name__}[/yellow]")
         console.print(f"[yellow]Error details: {str(e)}[/yellow]")
-        
+
         # Print traceback for debugging
         import traceback
+
         console.print("[dim]Traceback:[/dim]")
-        for line in traceback.format_exc().split('\n'):
+        for line in traceback.format_exc().split("\n"):
             if line.strip():
                 console.print(f"[dim]{line}[/dim]")
-        
+
         import sys
+
         sys.exit(1)
 
 
 @main.command()
-@click.option('--config', '-c', type=str, help='Path to configuration file')
-@click.option('--detail', '-d', is_flag=True, help='Show details')
+@click.option("--config", "-c", type=str, help="Path to configuration file")
+@click.option("--detail", "-d", is_flag=True, help="Show details")
 def list(config: str | None, detail: bool = False) -> None:
     """Create a new environment."""
     env_config = Environment.load_from_config(config).env_config
 
-    console.print(f"Environments for [bold][blue]{env_config.config.repo_name}[/blue]:[/bold]")
+    console.print(
+        f"Environments for [bold][blue]{env_config.config.repo_name}[/blue]:[/bold]"
+    )
     for env in env_config.list_work_trees():
         console.print(f"[green]{env.env_name}[/green]")
         if detail:
@@ -59,25 +66,32 @@ def list(config: str | None, detail: bool = False) -> None:
 
 
 @main.command()
-@click.argument('env', type=str, required=True)
-@click.option('--config', '-c', type=str, help='Path to configuration file')
+@click.argument("env", type=str, required=True)
+@click.option("--config", "-c", type=str, help="Path to configuration file")
 def join(env: str, config: str | None) -> None:
     """Join an environment."""
     environment = Environment.load_from_config(config, env)
     environment.join()
 
+
 @main.command()
-@click.argument('env', type=str, required=True)
-@click.option('--config', '-c', type=str, help='Path to configuration file')
+@click.argument("env", type=str, required=True)
+@click.option("--config", "-c", type=str, help="Path to configuration file")
 def remove(env: str, config: str | None) -> None:
     """Stop an environment."""
     environment = Environment.load_from_config(config, env)
-    asyncio.run(environment.remove())  
+    asyncio.run(environment.remove())
+
 
 @main.command()
-def sample() -> None:
-    """Tree command for environment management and visualization."""
-    click.echo("Running sample command")
+@click.option("--config", "-c", type=str, help="Path to configuration file")
+def info(config: str | None) -> None:
+    """Show information about an environment."""
+    tree_config = ConfigLoader(config).load_config()
+    console.print(f"Repository:   [bold][blue]{tree_config.repo_name}[/blue]")
+    console.print(f"Worktree:     [bold][blue]{tree_config.repo_path}[/blue]")
+    console.print(f"Image:        [bold][blue]{tree_config.docker_image}[/blue]")
+
 
 if __name__ == "__main__":
     main()
