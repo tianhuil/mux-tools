@@ -93,5 +93,15 @@ def info(config: str | None) -> None:
     console.print(f"Image:        [bold][blue]{tree_config.docker_image}[/blue]")
 
 
+@main.command()
+@click.argument("remote", type=str, required=True)
+@click.argument("env", type=str, required=True)
+@click.option("--config", "-c", type=str, help="Path to configuration file")
+def push(remote: str, env: str, config: str | None) -> None:
+    """Push changes to a remote repository."""
+    environment = Environment.load_from_config(config, env)
+    environment.push(remote)
+
+
 if __name__ == "__main__":
     main()

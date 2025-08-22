@@ -391,3 +391,22 @@ class Environment:
         """
         await self.create()
         self.join()
+
+    def push(self, remote: str) -> None:
+        if not self.env_config.work_path.exists():
+            console.print(
+                f"Worktree [bold][blue]{self.env_config.work_path}[/blue] does not exist"
+            )
+            return
+
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                self.env_config.work_path,
+                "push",
+                remote,
+                self.env_config.env_name,
+            ]
+        )
+        console.print(f"Pushed changes to [bold][blue]{remote}[/blue]")
