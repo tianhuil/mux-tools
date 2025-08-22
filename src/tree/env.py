@@ -18,7 +18,7 @@ from .config import TreeConfig, load_tree_config
 # Initialize console for rich output
 console = Console()
 
-class Environment:
+class EnvironmentConfig:
     """Environment class for managing worktrees and Docker environments."""
 
     def __init__(self, config: TreeConfig, env_name: str | None = None):
@@ -65,14 +65,14 @@ class Environment:
         """
         return f"tree-env_{self.config.repo_name}_{self.env_name}"
 
-    def list_work_trees(self) -> list['Environment']:
+    def list_work_trees(self) -> list['EnvironmentConfig']:
         """List all worktrees for the current user.
         
         Returns:
             List of Environment objects representing worktree directories
         """
         work_paths = list(self.repo_path.glob("*"))
-        return [Environment(self.config, work_path.name)  for work_path in work_paths]
+        return [EnvironmentConfig(self.config, work_path.name)  for work_path in work_paths]
 
 
 def is_superfluous_dagger_error(error: Exception) -> bool:
@@ -100,7 +100,7 @@ def is_superfluous_dagger_error(error: Exception) -> bool:
     return any(pattern in error_type or pattern in error_msg for pattern in dagger_error_patterns)
 
 
-def setup_work_repo(env: Environment) -> Path:
+def setup_work_repo(env: EnvironmentConfig) -> Path:
     """Clone the repository to the specified directory.
     
     Args:
@@ -155,7 +155,7 @@ def setup_work_repo(env: Environment) -> Path:
     return work_path
 
 
-async def start_docker_environment(env: Environment) -> str:
+async def start_docker_environment(env: EnvironmentConfig) -> str:
     """Start Docker environment with the specified configuration.
 
     Args:
@@ -248,7 +248,7 @@ async def start(config_path: str | Path | None = None) -> None:
         RuntimeError: If any step of the environment setup fails
     """
     try:
-        env = Environment(load_tree_config(config_path))
+        env = EnvironmentConfig(load_tree_config(config_path))
         
         work_path = setup_work_repo(env)
         image_name = await start_docker_environment(env)
@@ -264,14 +264,14 @@ async def start(config_path: str | Path | None = None) -> None:
     except Exception as e:
         raise RuntimeError(f"Failed to start environment: {str(e)}") from e
 
-async def list_work_trees(config_path: str | Path | None = None) -> list[Environment]:
+async def list_work_trees(config_path: str | Path | None = None) -> list[EnvironmentConfig]:
     """List all worktrees for the current user.
     
     Returns:
         List of Environment objects representing worktree directories
     """
     try:
-        env = Environment(load_tree_config(config_path))
+        env = EnvironmentConfig(load_tree_config(config_path))
         return env.list_work_trees()
 
     except Exception as e:
