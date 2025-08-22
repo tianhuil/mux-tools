@@ -9,7 +9,7 @@ import asyncio
 import click
 from rich.console import Console
 
-from .env import start
+from .env import Environment
 
 console = Console()
 
@@ -24,7 +24,7 @@ def main() -> None:
 def start_env(config: str | None) -> None:
     """Start development environment with tmux and Docker."""
     try:
-        asyncio.run(start(config))
+        asyncio.run(Environment.load_from_config(config).start())
         console.print("[green]Environment started successfully![/green]")
     except Exception as e:
         console.print(f"[red]Error starting environment: {e}[/red]")
