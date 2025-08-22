@@ -16,7 +16,9 @@ from .config import TreeConfig, load_tree_config
 
 
 def is_dagger_type_error(error: Exception) -> bool:
-    """Check if the error is the specific Dagger type checking issue.
+    """
+    Check if the error is the specific Dagger type checking issue.
+    It can be safely ignored.
     
     Args:
         error: The exception to check
