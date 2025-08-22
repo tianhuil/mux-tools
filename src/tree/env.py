@@ -18,6 +18,52 @@ from .config import TreeConfig, load_tree_config
 # Initialize console for rich output
 console = Console()
 
+class Environment:
+    """Environment class for managing worktrees and Docker environments."""
+
+    def __init__(self, config: TreeConfig, env_name: str | None = None):
+        self.config = config
+        self.env_name = env_name or self.generate_env_name()
+    
+    @staticmethod
+    def generate_env_name() -> str:
+        """Generate a 3-word memorable name.
+
+        Returns:
+            A memorable 3-word name like 'cobra-felix-amateur'
+        """
+        name = coolname.generate_slug(3)
+        return str(name)
+
+    @property
+    def repo_path(self) -> Path:
+        """Get the repository name.
+        
+        Returns:
+            The repository name
+        """
+        return Path.home() / ".config" / "tree" / "work" / self.config.repo_name
+
+    @property
+    def work_path(self) -> Path:
+        """Get the path for the worktree.
+        
+        Args:
+            env_name: Name of the environment / branch
+            
+        Returns:
+            Path to the worktree directory
+        """
+        return self.repo_path / self.env_name
+
+    def list_work_trees(self) -> list[Path]:
+        """List all worktrees for the current user.
+        
+        Returns:
+            List of Path objects representing worktree directories
+        """
+        return list(self.repo_path.glob("*"))
+
 
 def is_superfluous_dagger_error(error: Exception) -> bool:
     """
@@ -44,26 +90,7 @@ def is_superfluous_dagger_error(error: Exception) -> bool:
     return any(pattern in error_type or pattern in error_msg for pattern in dagger_error_patterns)
 
 
-def generate_env_name() -> str:
-    """Generate a 3-word memorable name.
-
-    Returns:
-        A memorable 3-word name like 'cobra-felix-amateur'
-    """
-    name = coolname.generate_slug(3)
-    return str(name)
-
-
-def list_work_trees() -> list[Path]:
-    """List all worktrees for the current user.
-    
-    Returns:
-        List of Path objects representing worktree directories
-    """
-    config_dir = Path.home() / ".config" / "tree" / "worktrees"
-    return list(config_dir.glob("*"))
-
-def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
+def setup_work_repo(env: Environment) -> Path:
     """Clone the repository to the specified directory.
     
     Args:
@@ -76,7 +103,9 @@ def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
     Raises:
         RuntimeError: If git clone or checkout fails
     """
-    work_path = config.get_work_path(env_name)
+    work_path = env.work_path
+    repo_path = env.repo_path
+    env_name = env.env_name
     
     # Create the directory structure
     work_path.parent.mkdir(parents=True, exist_ok=True)
@@ -86,19 +115,19 @@ def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
         console.print(f"Repository already exists at {work_path}")
         return work_path
     
-    console.print(f"Cloning repository from {config.repo_path} to {work_path}")
+    console.print(f"Cloning repository from {repo_path} to {work_path}")
     
     # Clone the repository
     try:
         result = subprocess.run(
-            ["git", "clone", "--single-branch", "--branch", config.default_branch, config.repo_path, str(work_path)],
+            ["git", "clone", "--single-branch", "--branch", env.config.default_branch, repo_path, str(work_path)],
             capture_output=True,
             text=True,
             check=True
         )
         console.print(f"Repository cloned successfully: {result.stdout}")
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Failed to clone repository from {config.repo_path}: {e.stderr}") from e
+        raise RuntimeError(f"Failed to clone repository from {repo_path}: {e.stderr}") from e
     
     # Create and checkout the new branch
     try:
@@ -116,7 +145,7 @@ def setup_work_repo(config: TreeConfig, env_name: str) -> Path:
     return work_path
 
 
-async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
+async def start_docker_environment(env: Environment) -> str:
     """Start Docker environment with the specified configuration.
 
     Args:
@@ -136,13 +165,15 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
             "dagger package not found. Please install it with: pip install dagger-io"
         )
 
-    work_path = config.get_work_path(env_name)
+    work_path = env.work_path
+    repo_name = env.config.repo_name
+    config = env.config
     
     # Verify work path exists
     if not work_path.exists():
         raise RuntimeError(f"Work path does not exist: {work_path}")
 
-    console.print(f"Starting Docker environment for {config.repo_name} at {work_path}")
+    console.print(f"Starting Docker environment for {repo_name} at {work_path}")
     
     # Start dagger client with verbose logging
     async with dagger.Connection(dagger.Config(log_output=sys.stdout)) as client:
@@ -176,7 +207,7 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
                 container = container.with_exec(["sh", "-c", cmd])
 
             # Build the container as a local Docker image
-            image_name = f"mux-env-{config.repo_name}-{env_name}"
+            image_name = f"mux-env-{config.repo_name}-{env.env_name}"
             console.print(f"Building container as Docker image: {image_name}")
             
             try:
@@ -217,15 +248,12 @@ async def start(config_path: str | Path | None = None) -> None:
         if not config.repo_name:
             raise RuntimeError(f"Could not extract repo_name from repo_path: {config.repo_path}")
 
-        # Generate environment name
-        env_name = generate_env_name()
-        console.print(f"Generated environment name: {env_name}")
-        
         # Setup work repository
-        work_path = setup_work_repo(config, env_name)
+        env = Environment(config)
+        work_path = setup_work_repo(env)
         
         # Start Docker environment
-        image_name = await start_docker_environment(config, env_name)
+        image_name = await start_docker_environment(env)
 
         # Start interactive shell
         console.print(f"Starting interactive shell in container...")

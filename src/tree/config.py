@@ -58,19 +58,6 @@ class TreeConfig(BaseModel):
         path = Path(self.repo_path)
         
         return path.name
-    
-    def get_work_path(self, env_name: str) -> Path:
-        """Get the path for the worktree.
-        
-        Args:
-            env_name: Name of the environment / branch
-            
-        Returns:
-            Path to the worktree directory
-        """
-        config_dir = Path.home() / ".config" / "tree" / "worktrees"
-        worktree_path = config_dir / self.repo_name / env_name
-        return worktree_path
 
 
 class ConfigLoader:
