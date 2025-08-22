@@ -15,7 +15,7 @@ import coolname  # type: ignore
 from .config import TreeConfig, load_tree_config
 
 
-def is_dagger_type_error(error: Exception) -> bool:
+def is_superfluous_dagger_error(error: Exception) -> bool:
     """
     Check if the error is the specific Dagger type checking issue.
     It can be safely ignored.
@@ -183,7 +183,7 @@ async def start_docker_environment(config: TreeConfig, env_name: str) -> str:
             try:
                 await container.export_image(f"{image_name}")
             except Exception as e:
-                if is_dagger_type_error(e):
+                if is_superfluous_dagger_error(e):
                     print(f"Warning: Dagger type checking issue detected (this is expected): {type(e).__name__}")
                     print(f"Error details: {str(e)}")
                 else:
