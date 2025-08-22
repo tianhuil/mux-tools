@@ -120,7 +120,7 @@ class Environment:
         return Environment(EnvironmentConfig(load_tree_config(config_path)))
 
 
-    def create_work_repo(self) -> None:
+    def _create_work_repo(self) -> None:
         """Clone the repository to the specified directory.
         
         Raises:
@@ -165,8 +165,28 @@ class Environment:
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Failed to create branch {env_name}: {e.stderr}") from e
 
+    def _remove_work_repo(self) -> None:
+        """Remove the work repository directory.
+        
+        Raises:
+            RuntimeError: If directory removal fails
+        """
+        work_path = self.env_config.work_path
+        
+        if not work_path.exists():
+            console.print(f"Work repository does not exist at {work_path}")
+            return
+        
+        console.print(f"Removing work repository: {work_path}")
+        
+        try:
+            import shutil
+            shutil.rmtree(work_path)
+            console.print(f"Work repository removed successfully")
+        except Exception as e:
+            raise RuntimeError(f"Failed to remove work repository: {str(e)}") from e
 
-    async def create_docker_environment(self) -> None:
+    async def _create_docker_environment(self) -> None:
         """Start Docker environment with the specified configuration.
 
         Raises:
@@ -238,16 +258,7 @@ class Environment:
             except Exception as e:
                 raise RuntimeError(f"Failed to build Docker environment: {str(e)}") from e
 
-    async def create(self) -> None:
-        """Create a new environment.
-        
-        Returns:
-            Name of the created environment
-        """
-        self.create_work_repo()
-        await self.create_docker_environment()
-
-    async def remove_docker_environment(self) -> None:
+    async def _remove_docker_environment(self) -> None:
         """Stop Docker container and delete the image.
         
         Raises:
@@ -291,27 +302,15 @@ class Environment:
         except subprocess.CalledProcessError as e:
             console.print(f"[yellow]Warning: Failed to remove Docker image: {e.stderr}[/yellow]")
 
-    def remove_work_repo(self) -> None:
-        """Remove the work repository directory.
+    async def create(self) -> None:
+        """Create a new environment.
         
-        Raises:
-            RuntimeError: If directory removal fails
+        Returns:
+            Name of the created environment
         """
-        work_path = self.env_config.work_path
-        
-        if not work_path.exists():
-            console.print(f"Work repository does not exist at {work_path}")
-            return
-        
-        console.print(f"Removing work repository: {work_path}")
-        
-        try:
-            import shutil
-            shutil.rmtree(work_path)
-            console.print(f"Work repository removed successfully")
-        except Exception as e:
-            raise RuntimeError(f"Failed to remove work repository: {str(e)}") from e
-
+        self._create_work_repo()
+        await self._create_docker_environment()
+   
     async def remove(self) -> None:
         """Remove the environment.
         
@@ -319,9 +318,8 @@ class Environment:
         1. Stops the Docker container and deletes the image
         2. Removes the work repository directory
         """
-        await self.remove_docker_environment()
-        self.remove_work_repo()
-
+        await self._remove_docker_environment()
+        self._remove_work_repo()
 
     async def start(self) -> None:
         """Main entry point for starting the environment.
@@ -341,4 +339,3 @@ class Environment:
             image_name, "/bin/sh"
         ])
 
-    
