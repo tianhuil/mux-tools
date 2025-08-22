@@ -120,16 +120,9 @@ class Environment:
         return Environment(EnvironmentConfig(load_tree_config(config_path)))
 
 
-    def setup_work_repo(self) -> Path:
+    def setup_work_repo(self) -> None:
         """Clone the repository to the specified directory.
         
-        Args:
-            config: TreeConfig instance with repository configuration
-            env_name: Name of the environment / branch
-            
-        Returns:
-            Path to the cloned repository
-            
         Raises:
             RuntimeError: If git clone or checkout fails
         """
@@ -143,7 +136,7 @@ class Environment:
         # Check if repository already exists
         if work_path.exists():
             console.print(f"Repository already exists at {work_path}")
-            return work_path
+            return
         
         console.print(f"Cloning repository from {repo_path} to {work_path}")
         
@@ -171,20 +164,11 @@ class Environment:
             console.print(f"Branch created successfully: {result.stdout}")
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Failed to create branch {env_name}: {e.stderr}") from e
-        
-        return work_path
 
 
-    async def start_docker_environment(self) -> str:
+    async def start_docker_environment(self) -> None:
         """Start Docker environment with the specified configuration.
 
-        Args:
-            config: TreeConfig instance with Docker and setup configuration
-            env_name: Name of the environment
-            
-        Returns:
-            Name of the created Docker image
-            
         Raises:
             RuntimeError: If Docker operations fail
         """
@@ -250,43 +234,43 @@ class Environment:
                         raise
 
                 console.print(f"Container loaded as Docker image: {image_name}")
-                return image_name
                 
             except Exception as e:
                 raise RuntimeError(f"Failed to build Docker environment: {str(e)}") from e
-            
+
+    async def create(self) -> None:
+        """Create a new environment.
+        
+        Returns:
+            Name of the created environment
+        """
+        self.setup_work_repo()
+        await self.start_docker_environment()
+
+    async def remove(self) -> None:
+        """Remove the environment.
+        
+        Returns:
+            Name of the removed environment
+        """
+        pass
+
     async def start(self) -> None:
         """Main entry point for starting the environment.
 
         Args:
             config_path: Optional path to configuration file
-            
-        Raises:
-            RuntimeError: If any step of the environment setup fails
         """
-        try:
-            work_path = self.setup_work_repo()
-            image_name = await self.start_docker_environment()
+        await self.create()
+        work_path = self.env_config.work_path
+        image_name = self.env_config.image_name
 
-            # Start interactive shell
-            console.print(f"Starting interactive shell in container...")
-            subprocess.run([
-                "docker", "run", "-it", "--rm", 
-                "-v", f"{work_path}:/work_dir",
-                image_name, "/bin/sh"
-            ])
-            
-        except Exception as e:
-            raise RuntimeError(f"Failed to start environment: {str(e)}") from e
+        # Start interactive shell
+        console.print(f"Starting interactive shell in container...")
+        subprocess.run([
+            "docker", "run", "-it", "--rm", 
+            "-v", f"{work_path}:/work_dir",
+            image_name, "/bin/sh"
+        ])
 
-    async def list_work_trees(self) -> list[EnvironmentConfig]:
-        """List all worktrees for the current user.
-        
-        Returns:
-            List of Environment objects representing worktree directories
-        """
-        try:
-            return self.env_config.list_work_trees()
-
-        except Exception as e:
-            raise RuntimeError(f"Failed to list worktrees: {str(e)}") from e
+    
