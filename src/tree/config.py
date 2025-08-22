@@ -25,9 +25,9 @@ class TreeConfig(BaseModel):
         description="Docker image to use"
     )
 
-    repo_name: str = Field(
+    repo_path: str = Field(
         default="",
-        description="Repository name"
+        description="Repository path"
     )
     
     default_branch: str = Field(
@@ -45,8 +45,20 @@ class TreeConfig(BaseModel):
         description="Commands to run for validation"
     )
     
-
-
+    @property
+    def repo_name(self) -> str:
+        """Extract the repository name from the repo_path.
+        
+        Returns:
+            The last part of the repo_path as the repository name
+        """
+        if not self.repo_path:
+            return ""
+        
+        path = Path(self.repo_path)
+        
+        return path.name
+        
 
 class ConfigLoader:
     """Loader for configuration files."""
@@ -98,7 +110,9 @@ class ConfigLoader:
             
             if config_data is None:
                 return TreeConfig()
-            
+
+            config_data["repo_path"] = config_data.get("repo_path") or str(Path.cwd())
+
             return TreeConfig(**config_data)
             
         except (yaml.YAMLError, OSError) as e:
@@ -149,7 +163,6 @@ def create_sample_config(path: str | Path) -> None:
     sample_config = TreeConfig(
         remote_repo="https://github.com/example/repo.git",
         docker_image="alpine:latest",
-        repo_name="repo_name",
         default_branch="main",
         setup_cmds=["npm install", "pip install -r requirements.txt"],
         validation_cmds=["npm test", "python -m pytest"]

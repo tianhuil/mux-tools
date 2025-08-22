@@ -28,6 +28,16 @@ def start_env(config: str | None) -> None:
         console.print("[green]Environment started successfully![/green]")
     except Exception as e:
         console.print(f"[red]Error starting environment: {e}[/red]")
+        console.print(f"[yellow]Error type: {type(e).__name__}[/yellow]")
+        console.print(f"[yellow]Error details: {str(e)}[/yellow]")
+        
+        # Print traceback for debugging
+        import traceback
+        console.print("[dim]Traceback:[/dim]")
+        for line in traceback.format_exc().split('\n'):
+            if line.strip():
+                console.print(f"[dim]{line}[/dim]")
+        
         import sys
         sys.exit(1)
 
