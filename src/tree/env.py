@@ -244,15 +244,7 @@ class Environment:
                 console.print(f"Pulling Docker image: {config.docker_image}")
                 container = client.container().from_(config.docker_image)
 
-                # Mount the worktree directory to /work_dir
-                container = container.with_mounted_directory(
-                    "/work_dir", client.host().directory(str(work_path))
-                )
-
-                # Set work directory
-                container = container.with_workdir("/work_dir")
-
-                # Install git if not already present
+                # Install git if not already present (do this before mounting to cache the layer)
                 console.print("Installing git...")
                 container = container.with_exec(
                     [
@@ -262,7 +254,15 @@ class Environment:
                     ]
                 )
 
-                # Run setup commands
+                # Set work directory
+                container = container.with_workdir("/work_dir")
+
+                # Mount the worktree directory to /work_dir (do this last to avoid invalidating cache)
+                container = container.with_mounted_directory(
+                    "/work_dir", client.host().directory(str(work_path))
+                )
+
+                # Run setup commands (do this before mounting to cache the layers)
                 for i, cmd in enumerate(config.setup_cmds, 1):
                     if cmd.startswith("#"):
                         continue
