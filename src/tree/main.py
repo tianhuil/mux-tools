@@ -103,10 +103,11 @@ def join(env: str, config: str | None) -> None:
 @main.command()
 @click.argument("env", type=str, required=True)
 @click.option("--config", "-c", type=str, help="Path to configuration file")
-def remove(env: str, config: str | None) -> None:
+@click.option("--repo-only", "-r", is_flag=True, help="Remove repository only")
+def remove(env: str, config: str | None, repo_only: bool = False) -> None:
     """Remove an environment."""
     environment = Environment.load_from_config(config, env)
-    asyncio.run(environment.remove())
+    asyncio.run(environment.remove(repo_only))
 
 
 @main.command()

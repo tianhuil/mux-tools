@@ -355,14 +355,15 @@ class Environment:
         if not repo_only:
             await self._create_docker_environment()
 
-    async def remove(self) -> None:
+    async def remove(self, repo_only: bool = False) -> None:
         """Remove the environment.
 
         This method:
         1. Stops the Docker container and deletes the image
         2. Removes the work repository directory
         """
-        await self._remove_docker_environment()
+        if not repo_only:
+            await self._remove_docker_environment()
         self._remove_work_repo()
 
     def join(self) -> None:
