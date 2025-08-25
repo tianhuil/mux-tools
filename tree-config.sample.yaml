@@ -1,0 +1,12 @@
+# Sample configuration for tree environment
+remote_repo: "https://github.com/tianhuil/demo-repo.git"
+docker_image: "python:3.11-slim"
+default_branch: "main"
+setup_cmds:
+  - "echo 'Hello, World!'"
+  - "# apt-get update && apt-get install -y git"
+  - "# pip install -r requirements.txt"
+  - "# npm install"
+validation_cmds:
+  - "# python -m pytest"
+  - "# npm test"
