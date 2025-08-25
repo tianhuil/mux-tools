@@ -28,8 +28,18 @@ def main() -> None:
 def create(config: str | None, repo_only: bool = False) -> None:
     """Create a new development environment."""
     try:
-        asyncio.run(Environment.load_from_config(config).create(repo_only))
-        console.print("[green]Environment created successfully![/green]")
+        environment = Environment.load_from_config(config)
+        asyncio.run(environment.create(repo_only))
+        if repo_only:
+            console.print("[green]Repository created successfully![/green]")
+            console.print(
+                f"Repo Directory: [bold]{environment.env_config.work_path}[/bold]"
+            )
+        else:
+            console.print("[green]Environment created successfully![/green]")
+            console.print(
+                f"To join the environment, run [bold]tree join {environment.env_config.env_name}[/bold]"
+            )
     except Exception as e:
         console.print(f"[red]Error creating environment: {e}[/red]")
         console.print(f"[yellow]Error type: {type(e).__name__}[/yellow]")
