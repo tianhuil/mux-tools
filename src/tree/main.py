@@ -24,10 +24,11 @@ def main() -> None:
 
 @main.command()
 @click.option("--config", "-c", type=str, help="Path to configuration file")
-def create(config: str | None) -> None:
+@click.option("--repo-only", "-r", is_flag=True, help="Create a new repository only")
+def create(config: str | None, repo_only: bool = False) -> None:
     """Create a new development environment."""
     try:
-        asyncio.run(Environment.load_from_config(config).create())
+        asyncio.run(Environment.load_from_config(config).create(repo_only))
         console.print("[green]Environment created successfully![/green]")
     except Exception as e:
         console.print(f"[red]Error creating environment: {e}[/red]")

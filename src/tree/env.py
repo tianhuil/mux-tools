@@ -345,14 +345,15 @@ class Environment:
                 f"[yellow]Warning: Failed to remove Docker image: {e.stderr}[/yellow]"
             )
 
-    async def create(self) -> None:
+    async def create(self, repo_only: bool = False) -> None:
         """Create a new environment.
 
         Returns:
             Name of the created environment
         """
         self._create_work_repo()
-        await self._create_docker_environment()
+        if not repo_only:
+            await self._create_docker_environment()
 
     async def remove(self) -> None:
         """Remove the environment.
